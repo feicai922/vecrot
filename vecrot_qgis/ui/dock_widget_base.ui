@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>VecrotDockWidgetBase</class>
+ <widget class="QDockWidget" name="VecrotDockWidgetBase">
+  <property name="windowTitle">
+   <string>Vecrot 建筑提取</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QVBoxLayout" name="outerLayout">
+    <property name="leftMargin"><number>0</number></property>
+    <property name="topMargin"><number>0</number></property>
+    <property name="rightMargin"><number>0</number></property>
+    <property name="bottomMargin"><number>0</number></property>
+    <item>
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="widgetResizable"><bool>true</bool></property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="frameShape"><enum>QFrame::NoFrame</enum></property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <layout class="QVBoxLayout" name="mainLayout">
+      <item>
+       <widget class="QGroupBox" name="inputGroup">
+        <property name="title">
+         <string>1. 输入影像</string>
+        </property>
+        <layout class="QVBoxLayout" name="inputLayout">
+         <item>
+          <layout class="QHBoxLayout" name="rasterComboRow">
+           <item>
+            <widget class="QComboBox" name="rasterCombo">
+             <property name="toolTip">
+              <string>从当前 QGIS 项目已加载的栅格图层中选择</string>
+             </property>
+             <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToMinimumContentsLengthWithIcon</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="refreshLayersButton">
+             <property name="text">
+              <string>⟳</string>
+             </property>
+             <property name="toolTip">
+              <string>刷新项目图层列表</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="rasterRow">
+           <item>
+            <widget class="QLineEdit" name="rasterPathEdit">
+             <property name="placeholderText">
+              <string>项目图层路径；也可点右侧 … 直接选本地文件</string>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="browseButton">
+             <property name="text">
+              <string>…</string>
+             </property>
+             <property name="toolTip">
+              <string>选择本地影像文件（不在项目里时用）</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="rasterInfoLabel">
+           <property name="text">
+            <string>未选择影像</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="aoiGroup">
+        <property name="title">
+         <string>2. 框选范围（AOI）</string>
+        </property>
+        <layout class="QVBoxLayout" name="aoiLayout">
+         <item>
+          <layout class="QHBoxLayout" name="aoiRow">
+           <item>
+            <widget class="QPushButton" name="drawAoiButton">
+             <property name="text">
+              <string>在地图上框选</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="clearAoiButton">
+             <property name="text">
+              <string>清除</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="aoiInfoLabel">
+           <property name="text">
+            <string>未框选（不框选则使用整幅影像）</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="outputGroup">
+        <property name="title">
+         <string>3. 输出</string>
+        </property>
+        <layout class="QHBoxLayout" name="outputLayout">
+         <item>
+          <widget class="QLineEdit" name="outputDirEdit">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="outputBrowseButton">
+           <property name="text">
+            <string>…</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="advancedGroup">
+        <property name="title">
+         <string>高级设置</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <layout class="QFormLayout" name="advancedLayout">
+         <item row="0" column="0">
+          <widget class="QLabel" name="scoreLabel">
+           <property name="text">
+            <string>检测分数阈值</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QDoubleSpinBox" name="scoreSpin">
+           <property name="decimals">
+            <number>2</number>
+           </property>
+           <property name="singleStep">
+            <double>0.05</double>
+           </property>
+           <property name="value">
+            <double>0.30</double>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="batchLabel">
+           <property name="text">
+            <string>生成批大小</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QSpinBox" name="batchSpin">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>128</number>
+           </property>
+           <property name="value">
+            <number>4</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="aoiPolicyLabel">
+           <property name="text">
+            <string>AOI 策略</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="aoiPolicyCombo">
+           <item>
+            <property name="text">
+             <string>保留完整建筑（默认）</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>严格裁剪到 AOI</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="crsPolicyLabel">
+           <property name="text">
+            <string>输出 CRS</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLineEdit" name="crsPolicyEdit">
+           <property name="placeholderText">
+            <string>source 或 EPSG:xxxx</string>
+           </property>
+           <property name="text">
+            <string>source</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="modelPresetLabel">
+           <property name="text">
+            <string>模型搭配</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QComboBox" name="modelPresetCombo">
+           <property name="toolTip">
+            <string>每个选项是一套固定组合：权重 + 配置 + 类别数 + 轮廓适配器/基座。成套使用，避免权重与配置错配。</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="modelDetailLabel">
+           <property name="text">
+            <string>组合详情</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QLabel" name="modelDetailView">
+           <property name="text">
+            <string/>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::TextSelectableByMouse</set>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeft|Qt::AlignTop</set>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="manifestLabel">
+           <property name="text">
+            <string>部署 manifest</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <layout class="QHBoxLayout" name="manifestRow">
+           <item>
+            <widget class="QLineEdit" name="manifestEdit">
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="manifestBrowseButton">
+             <property name="text">
+              <string>…</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="runGroup">
+        <property name="title">
+         <string>4. 运行</string>
+        </property>
+        <layout class="QVBoxLayout" name="runLayout">
+         <item>
+          <layout class="QHBoxLayout" name="runRow">
+           <item>
+            <widget class="QPushButton" name="runButton">
+             <property name="text">
+              <string>开始提取</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="cancelButton">
+             <property name="text">
+              <string>取消</string>
+             </property>
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="stageLabel">
+           <property name="text">
+            <string>就绪</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QProgressBar" name="progressBar">
+           <property name="value">
+            <number>0</number>
+           </property>
+           <property name="format">
+            <string>%v / %m</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPlainTextEdit" name="logEdit">
+           <property name="readOnly">
+            <bool>true</bool>
+           </property>
+           <property name="maximumBlockCount">
+            <number>2000</number>
+           </property>
+           <property name="lineWrapMode">
+            <enum>QPlainTextEdit::WidgetWidth</enum>
+           </property>
+           <property name="horizontalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOff</enum>
+           </property>
+           <property name="maximumHeight">
+            <number>160</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="resultGroup">
+        <property name="title">
+         <string>5. 结果</string>
+        </property>
+        <layout class="QHBoxLayout" name="resultLayout">
+         <item>
+          <widget class="QPushButton" name="loadResultsButton">
+           <property name="text">
+            <string>加载成果到地图</string>
+           </property>
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="openReportButton">
+           <property name="text">
+            <string>打开报告</string>
+           </property>
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="autoLoadCheck">
+        <property name="text">
+         <string>作业完成后自动加载成果到地图</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+        <property name="toolTip">
+         <string>取消勾选则只写文件，需要手动点「加载成果到地图」</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="incrementalGroup">
+        <property name="title">
+         <string>6. 增量提取（继续在已加载成果上追加）</string>
+        </property>
+        <layout class="QVBoxLayout" name="incrementalLayout">
+         <item>
+          <widget class="QLabel" name="incrementalInfoLabel">
+           <property name="text">
+            <string>完成一次作业后，可框选新区域继续推理，结果会追加到当前成果。</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="incrementalRow">
+           <item>
+            <widget class="QCheckBox" name="incrementalCheck">
+             <property name="text">
+              <string>增量模式（复用已有成果目录）</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="continueButton">
+             <property name="text">
+              <string>继续提取新框选</string>
+             </property>
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="toolTip">
+              <string>框选一个新区域后点击，结果会追加到当前项目图层</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

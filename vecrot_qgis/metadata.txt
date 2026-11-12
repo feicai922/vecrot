@@ -1,0 +1,18 @@
+[general]
+name=Vecrot 建筑提取
+qgisMinimumVersion=3.28
+qgisMaximumVersion=3.99
+description=本地影像 → 旋转框检测 → VectorLLM 轮廓 → 双 GeoPackage（框 + 建筑）。
+about=把 Vecrot 的旋转框检测与 VectorLLM 轮廓生成接入 QGIS。所有模型推理在 QGIS 之外的外部进程运行；本插件只负责框选、启动作业、显示进度与加载成果，不向 QGIS 的 Python 安装任何推理依赖。
+version=0.1.0
+author=Vecrot
+email=
+repository=
+tracker=
+icon=icon.png
+category=Plugins
+tags=building,detection,vectorllm,segmentation,vecrot
+experimental=False
+deprecated=False
+hasProcessingProvider=no
+supportsQt6=True

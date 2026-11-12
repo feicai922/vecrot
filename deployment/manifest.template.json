@@ -1,0 +1,68 @@
+{
+  "_comment": "通用分发模板；模型路径相对于仓库根。install.py 根据脚本位置生成本机 manifest.json，不要求指定盘符或仓库父目录。",
+  "schema_version": "1.0",
+  "display_name": "Vecrot 本地部署",
+  "repo_root": "..",
+  "environments": {
+    "coordinator": {
+      "python": "",
+      "gis_env_dir": "",
+      "_comment": "外部 GIS 环境，不安装 Torch；填写本机解释器或由安装器探测。"
+    },
+    "detector": {
+      "python": "",
+      "extra_path": [],
+      "env": {}
+    },
+    "vector": {
+      "python": "",
+      "extra_path": [],
+      "env": {}
+    },
+    "detector_hf": {
+      "python": "",
+      "extra_path": [],
+      "env": {},
+      "_comment": "RT-DETR 复用 vector 环境。"
+    }
+  },
+  "models": {
+    "detector": {
+      "repo": "vecrot/models/detector_strip_s/Strip-R-CNN",
+      "weights": "vecrot/models/detector_strip_s_scene/best_mAP_iter_37620.pth",
+      "config": "vecrot/models/detector_strip_s_scene/strip_s_gzda_scene.py",
+      "base_config": "configs/strip_rcnn/strip_rcnn_s_fpn_1x_dota_le90.py",
+      "profile": "strip_s_gzda",
+      "score_thr": 0.05,
+      "nms_iou": 0.3,
+      "max_per_img": 2000,
+      "scene_threshold": 0.5
+    },
+    "vectorizer": {
+      "vecrot_dir": "vecrot",
+      "ckpt": "vecrot/models/adaptor_sc_055m",
+      "base": "vecrot/models/official_vocab_635",
+      "profile": "vecrot",
+      "scale_cond": null
+    },
+    "detections_jsonl": null
+  },
+  "policy": {
+    "qgis_must_not_install": [
+      "torch",
+      "torchvision",
+      "transformers",
+      "mmcv",
+      "mmdet",
+      "rasterio",
+      "pyogrio"
+    ],
+    "max_crop_pixels": 4096
+  },
+  "qgis": {
+    "_comment": "由 run_in_qgis.py 探测本机安装；非标准位置可设置 QGIS_PREFIX。",
+    "install_dir": "",
+    "python": "",
+    "pyqgis_path": ""
+  }
+}

@@ -1,0 +1,47 @@
+# ---- 模型与权重（体积大，不入库，见 docs/模型下载.md 的网盘链接）----
+vecrot/models/*
+# ScaleCond 适配器只有 1.4 MB，随仓库一起分发，省掉一次下载
+!vecrot/models/adaptor_sc_055m/
+!vecrot/models/adaptor_sc_055m/**
+# 推理配置是源码不是权重（10 KB），随仓库走，避免用户版本对不上
+!vecrot/models/detector_strip_s_scene/
+!vecrot/models/detector_strip_s_scene/strip_s_gzda_scene.py
+
+# 推理期重建产物
+work/
+runs/
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# ---- QGIS / Qt ----
+*.qgs~
+*.qgz~
+.qgis2/
+
+# ---- 作业输出 ----
+*.gpkg
+*.gpkg-wal
+*.gpkg-shm
+out_*/
+report.json
+
+# ---- 本地环境与凭据 ----
+.env
+*.local.json
+
+# ---- 编辑器 / 系统 ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ---- 打包产物 ----
+dist/
+
+# 本机安装生成；接收方从 template 重建
+/deployment/manifest.json

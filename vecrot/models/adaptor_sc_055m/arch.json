@@ -1,0 +1,20 @@
+{
+  "scale_cond": true,
+  "scale_cond_hidden": 256,
+  "zoom": false,
+  "zoom_dynamic": true,
+  "edge_corner": false,
+  "edge_use_dense": true,
+  "code_dim": 64,
+  "hr_edge": false,
+  "hr_size": 256,
+  "edge_size": 64,
+  "hr_channels": 64,
+  "boundary_tokens": 32,
+  "boundary_uniform": 8,
+  "dim": 1024,
+  "heads": 8,
+  "scale_edge_params": 545025,
+  "ls_max": 0.2,
+  "res_cap": 0.08
+}

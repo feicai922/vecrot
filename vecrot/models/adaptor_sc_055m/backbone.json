@@ -1,0 +1,6 @@
+{
+  "llm": "",
+  "vision": "radio_l",
+  "projector": "mlp",
+  "base": "/data1/wzh26/vectorllm_v2/work_dirs/vocab_prune/official_vocab"
+}
