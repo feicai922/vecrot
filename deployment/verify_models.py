@@ -42,7 +42,7 @@ ITEMS = (
     ("vecrot/models/detector_strip_s/Strip-R-CNN/configs/gzda/scene_hooks.py",
      "场景分类 Hook 注册模块", True, 1),
     ("vecrot/models/adaptor_sc_055m/trainable.pt",
-     "ScaleCond 适配器（仓库自带）", True, 500 * 1024),
+     "ScaleCond 适配器（网盘 models 包）", True, 500 * 1024),
     ("vecrot/lib/vectorizer.py",
      "VectorLLM 推理封装（仓库自带）", True, 1024),
     ("vecrot/lib/vectorllm/hub.py",

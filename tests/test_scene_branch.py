@@ -23,11 +23,13 @@ SCENE_W = os.path.join(SCENE_DIR, "best_mAP_iter_37620.pth")
 GZDA_DIR = os.path.join(REPO, "vecrot", "models", "detector_strip_s",
                         "Strip-R-CNN", "configs", "gzda")
 
-# 场景版推理配置随仓库分发（10 KB，是源码不是权重）；权重和 Strip-R-CNN
-# 源码要靠网盘下载。没下载时跳过依赖它们的用例，而不是报失败 ——
+# 场景配置、权重和定制源码均从网盘 models 包下载。
+# 没下载时跳过依赖它们的用例，而不是报失败 ——
 # 否则新 clone 的人跑 pytest 会以为代码有问题。
 HAS_WEIGHTS = os.path.isfile(SCENE_W)
 HAS_SOURCE = os.path.isdir(GZDA_DIR)
+needs_config = pytest.mark.skipif(
+    not os.path.isfile(SCENE_CFG), reason="未下载场景配置，见 docs/模型下载.md")
 needs_weights = pytest.mark.skipif(
     not HAS_WEIGHTS, reason="未下载场景权重，见 docs/模型下载.md")
 needs_source = pytest.mark.skipif(
@@ -40,6 +42,7 @@ def test_scene_assets_exist():
     assert os.path.isfile(SCENE_W), f"缺场景权重：{SCENE_W}"
 
 
+@needs_config
 def test_scene_config_declares_scene_head():
     src = open(SCENE_CFG, encoding="utf-8").read()
     assert "StripRCNNScene" in src, "配置应使用 StripRCNNScene 模型类"

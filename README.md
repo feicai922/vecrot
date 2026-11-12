@@ -10,6 +10,13 @@
 
 下载或克隆本仓库 `vecrot`，可以放在任意盘符、任意目录。
 
+```powershell
+git clone https://github.com/feicai922/vecrot.git
+Set-Location .\vecrot
+```
+
+GitHub 只提供代码，不包含 `models` 文件夹；模型权重、适配器和配套配置统一从网盘下载。
+
 从 [百度网盘下载整个 models 文件夹](https://pan.baidu.com/s/1e6lr0Fk2Ud4lWQYXK58ecA?pwd=c83w)，提取码：`c83w`。将它放到仓库内的 `vecrot/` 目录，保持包内文件名和目录结构：
 
 ```text
