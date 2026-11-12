@@ -28,9 +28,9 @@
   },
   "models": {
     "detector": {
-      "repo": "vecrot/models/detector_strip_s/Strip-R-CNN",
+      "repo": "third_party/Strip-R-CNN",
       "weights": "vecrot/models/detector_strip_s_scene/best_mAP_iter_37620.pth",
-      "config": "vecrot/models/detector_strip_s_scene/strip_s_gzda_scene.py",
+      "config": "third_party/Strip-R-CNN/configs/gzda/strip_s_gzda_scene.py",
       "base_config": "configs/strip_rcnn/strip_rcnn_s_fpn_1x_dota_le90.py",
       "profile": "strip_s_gzda",
       "score_thr": 0.05,

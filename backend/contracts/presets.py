@@ -101,7 +101,7 @@ STRIP_GZDA = ModelPreset(
     backend="strip_s_gzda",
     files={
         "weights": _r("vecrot/models/detector_strip_s/best_mAP_iter_90288.pth"),
-        "config": _r("vecrot/models/detector_strip_s/Strip-R-CNN/configs/gzda/"
+        "config": _r("third_party/Strip-R-CNN/configs/gzda/"
                      "strip_s_gzda.py"),
         "vector_ckpt": _r("vecrot/models/adaptor_sc_055m"),
         # 训练时的 official_vocab 缺失，用按 prune 映射重建的 635 词表基座
@@ -158,8 +158,7 @@ STRIP_GZDA_SCENE = ModelPreset(
     files={
         "weights": _r("vecrot/models/detector_strip_s_scene/"
                       "best_mAP_iter_37620.pth"),
-        "config": _r("vecrot/models/detector_strip_s_scene/"
-                     "strip_s_gzda_scene.py"),
+        "config": _r("third_party/Strip-R-CNN/configs/gzda/strip_s_gzda_scene.py"),
         "vector_ckpt": _r("vecrot/models/adaptor_sc_055m"),
         "vector_base": _r("vecrot/models/official_vocab_635"),
     },

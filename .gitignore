@@ -39,3 +39,11 @@ dist/
 
 # 本机安装生成；接收方从 template 重建
 /deployment/manifest.json
+
+# Vendored source build products and model weights stay out of Git.
+/third_party/Strip-R-CNN/mmrotate/.mim/
+/third_party/Strip-R-CNN/build/
+/third_party/Strip-R-CNN/dist/
+/third_party/Strip-R-CNN/**/*.pth
+/third_party/Strip-R-CNN/**/*.pt
+/third_party/Strip-R-CNN/**/*.safetensors

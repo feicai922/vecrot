@@ -221,7 +221,7 @@ def _make_strip_gzda() -> ModelPreset:
         files={
             "weights": _abs("vecrot/models/detector_strip_s/"
                             "best_mAP_iter_90288.pth"),
-            "config": _abs("vecrot/models/detector_strip_s/Strip-R-CNN/configs/"
+            "config": _abs("third_party/Strip-R-CNN/configs/"
                            "gzda/strip_s_gzda.py"),
             "vector_ckpt": _abs("vecrot/models/adaptor_sc_055m"),
             "vector_base": _abs("vecrot/models/official_vocab_635"),
@@ -269,8 +269,7 @@ def _make_strip_gzda_scene() -> ModelPreset:
         files={
             "weights": _abs("vecrot/models/detector_strip_s_scene/"
                             "best_mAP_iter_37620.pth"),
-            "config": _abs("vecrot/models/detector_strip_s_scene/"
-                           "strip_s_gzda_scene.py"),
+            "config": _abs("third_party/Strip-R-CNN/configs/gzda/strip_s_gzda_scene.py"),
             "vector_ckpt": _abs("vecrot/models/adaptor_sc_055m"),
             "vector_base": _abs("vecrot/models/official_vocab_635"),
         },

@@ -25,7 +25,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
 sys.path.insert(0, REPO)
 
-REPO_SRC = os.path.join(REPO, "vecrot", "models", "detector_strip_s", "Strip-R-CNN")
+REPO_SRC = os.path.join(REPO, "third_party", "Strip-R-CNN")
 GZDA = os.path.join(REPO_SRC, "configs", "gzda", "strip_s_gzda.py")
 DATASET = os.path.join(REPO_SRC, "configs", "gzda", "gzda_dataset.py")
 BASE = os.path.join(REPO_SRC, "configs", "strip_rcnn",

@@ -1,0 +1,2 @@
+# Keep the vendored snapshot byte-for-byte for its recorded SHA256 values.
+third_party/Strip-R-CNN/** -text

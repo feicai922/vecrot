@@ -18,22 +18,21 @@ from helpers import plugin_parent   # noqa: E402
 sys.path.insert(0, plugin_parent())
 
 SCENE_DIR = os.path.join(REPO, "vecrot", "models", "detector_strip_s_scene")
-SCENE_CFG = os.path.join(SCENE_DIR, "strip_s_gzda_scene.py")
+SCENE_CFG = os.path.join(REPO, "third_party", "Strip-R-CNN", "configs", "gzda", "strip_s_gzda_scene.py")
 SCENE_W = os.path.join(SCENE_DIR, "best_mAP_iter_37620.pth")
-GZDA_DIR = os.path.join(REPO, "vecrot", "models", "detector_strip_s",
-                        "Strip-R-CNN", "configs", "gzda")
+GZDA_DIR = os.path.join(REPO, "third_party", "Strip-R-CNN", "configs", "gzda")
 
-# 场景配置、权重和定制源码均从网盘 models 包下载。
+# 场景配置和定制源码随 GitHub 分发，权重从网盘下载。
 # 没下载时跳过依赖它们的用例，而不是报失败 ——
 # 否则新 clone 的人跑 pytest 会以为代码有问题。
 HAS_WEIGHTS = os.path.isfile(SCENE_W)
 HAS_SOURCE = os.path.isdir(GZDA_DIR)
 needs_config = pytest.mark.skipif(
-    not os.path.isfile(SCENE_CFG), reason="未下载场景配置，见 docs/模型下载.md")
+    not os.path.isfile(SCENE_CFG), reason="缺少 GitHub 配套场景配置，请检查代码完整性")
 needs_weights = pytest.mark.skipif(
     not HAS_WEIGHTS, reason="未下载场景权重，见 docs/模型下载.md")
 needs_source = pytest.mark.skipif(
-    not HAS_SOURCE, reason="未下载 Strip-R-CNN 源码，见 docs/模型下载.md")
+    not HAS_SOURCE, reason="缺少 third_party/Strip-R-CNN，请检查代码完整性")
 
 
 @needs_weights

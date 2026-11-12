@@ -3,7 +3,7 @@
 ## 源码与定制（2026-11-10 实测核对）
 
 ```text
-vecrot/models/detector_strip_s/Strip-R-CNN/     MMRotate 0.3.4 完整分支
+third_party/Strip-R-CNN/     MMRotate 0.3.4 完整分支
   configs/strip_rcnn/strip_rcnn_s_fpn_1x_dota_le90.py   上游基础配置
   configs/gzda/strip_s_gzda.py                          本地训练覆盖配置
   configs/gzda/gzda_dataset.py                          GzdaRBoxDataset + GzdaConsoleHook
@@ -313,7 +313,7 @@ class StripRcnnDetector:
             raise DetectorNotAvailable(
                 "DETECTOR_REPO_MISSING",
                 "未配置 Strip-R-CNN 源码目录（manifest models.detector.repo）；"
-                "期望位于 vecrot/models/detector_strip_s/Strip-R-CNN")
+                "期望位于 third_party/Strip-R-CNN")
         if not os.path.isfile(self._upstream_base_config()):
             raise DetectorNotAvailable(
                 "DETECTOR_CONFIG_MISSING",

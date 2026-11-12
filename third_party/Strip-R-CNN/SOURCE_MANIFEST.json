@@ -1,0 +1,1415 @@
+{
+  "origin": "https://github.com/YXB-NKU/Strip-R-CNN",
+  "snapshot": "Existing local MMRotate 0.3.4 fork with gzda and reconstructed scene modules; upstream commit unknown",
+  "scope": "Runtime source subset: mmrotate, configs, requirements, tools and package/license files; no weights, demos, build products or .mim copies",
+  "files": [
+    {
+      "file": "CITATION.cff",
+      "sha256": "03c4cadc066d95874cc77e669ffcd16b136a25af4c51bbecbdd800326f9156bf"
+    },
+    {
+      "file": "configs/_base_/datasets/dior.py",
+      "sha256": "0dbd4cb58dda40741036afc84fb2421a6607419af370471769aae40f370c824f"
+    },
+    {
+      "file": "configs/_base_/datasets/dotav1.py",
+      "sha256": "a9e4b890e2d44e1fdc8ca0ca32a6b29a08856fc55131c51d1f4b0a7f1381a103"
+    },
+    {
+      "file": "configs/_base_/datasets/dotav15.py",
+      "sha256": "2b986d76d47a2d12f8c9119edf209e9a48aece61b52ce7a2cae2319fb81dc1b2"
+    },
+    {
+      "file": "configs/_base_/datasets/fairv1.py",
+      "sha256": "abea04c87bb9bca324921b45eb5455aebff655016a6af5fffd93f760e2d99a96"
+    },
+    {
+      "file": "configs/_base_/datasets/hrsc.py",
+      "sha256": "8b04ab9a61d1c79c323b3a48400f937b79f1102e63b9cdc0e4468d73d5ec4c1f"
+    },
+    {
+      "file": "configs/_base_/datasets/hrsid.py",
+      "sha256": "ddbcd5e2e942192808b70ec25e8490e7da00ef2b4cb1f0b9ef8a4c9eb3a99432"
+    },
+    {
+      "file": "configs/_base_/datasets/ssdd.py",
+      "sha256": "6e5bac1d32890bd7da1a4e2e96f36d53f1715f5f64f2c1168df8e7617d653ebe"
+    },
+    {
+      "file": "configs/_base_/default_runtime.py",
+      "sha256": "046fc7f2d6a8dd3891b2ad90f1c5c5ea3e45345a1f44163318a6b8e8e33ceb77"
+    },
+    {
+      "file": "configs/_base_/schedules/schedule_1x.py",
+      "sha256": "eef4b63abefd4e51bce476a012013d63ec27e06c87516a2352ff57b5f46f80e9"
+    },
+    {
+      "file": "configs/_base_/schedules/schedule_30e.py",
+      "sha256": "f53bb43d089bed3746264758c9d6f47ef90caa24998c988632512a093dc5b94d"
+    },
+    {
+      "file": "configs/_base_/schedules/schedule_3x.py",
+      "sha256": "f47306c169e3d4bbf654f8d18e7c386728d8fadf373a59535a21b8d41ffad7db"
+    },
+    {
+      "file": "configs/_base_/schedules/schedule_40e.py",
+      "sha256": "f9d08a27ce6e68aeb6491e45ccd57e360e881e1b31bbaf565fb042afe0f44153"
+    },
+    {
+      "file": "configs/_base_/schedules/schedule_6x.py",
+      "sha256": "ebf504cb3e6e9419c72215b3384f6c2af8134fdc2817ccced2a6e9a77cd71330"
+    },
+    {
+      "file": "configs/cfa/cfa_r50_fpn_1x_dota_le135.py",
+      "sha256": "1fba645c180699b25f0d5768b96bb59ac42ef0ff54ade14b7c90eb547db857dd"
+    },
+    {
+      "file": "configs/cfa/cfa_r50_fpn_1x_dota_oc.py",
+      "sha256": "e1d3d84ee79e0da18e7dea324e2d44be5fa495947b9c01048e6fd0791339992a"
+    },
+    {
+      "file": "configs/cfa/cfa_r50_fpn_40e_dota_oc.py",
+      "sha256": "1c4856aad0efe5af6bcc1df04ccde02a6049c119293e96e130dc8dfd518e44b5"
+    },
+    {
+      "file": "configs/cfa/metafile.yml",
+      "sha256": "5e32f0557a5ecca4cdadc6425ca357e25b36c0672c3cf541a034be2d7433881d"
+    },
+    {
+      "file": "configs/cfa/README.md",
+      "sha256": "336d382097e9c612c6837633eb37288dd8589d1465fe26233402a94188f8a3ea"
+    },
+    {
+      "file": "configs/convnext/metafile.yml",
+      "sha256": "926c1e5238fb5ac1eb29e4aa6f7002e57c72f5cf61c16e97cbda4840afd63bb4"
+    },
+    {
+      "file": "configs/convnext/README.md",
+      "sha256": "fed5c27679c9662852238d8a63a7ccdb5ec5f9529f862b7083cda1db204acc82"
+    },
+    {
+      "file": "configs/convnext/rotated_retinanet_obb_kld_stable_convnext_adamw_fpn_1x_dota_le90.py",
+      "sha256": "80e3b57434a884a51286360afbb97bd1ce33538276f05f5bc703ecb57b2487ea"
+    },
+    {
+      "file": "configs/csl/metafile.yml",
+      "sha256": "48468206090bdd7d95764cf03871ed7e9504771bf7cd30bc87111e39652ed603"
+    },
+    {
+      "file": "configs/csl/README.md",
+      "sha256": "6b7b885b63067657c11ce62a6df1e53a50e7894e8a6ed3a6646601e206a09847"
+    },
+    {
+      "file": "configs/csl/rotated_retinanet_obb_csl_gaussian_r50_fpn_fp16_1x_dota_le90.py",
+      "sha256": "2d81f3ff53c4d2e06a50d2b942c0fabdb4e4c48de7b732d5556630cde92cce74"
+    },
+    {
+      "file": "configs/g_reppoints/g_reppoints_r50_fpn_1x_dota_le135.py",
+      "sha256": "cd8b63ec5464805c7bee183a10a700725502654ac09be6d4313b889965c33998"
+    },
+    {
+      "file": "configs/g_reppoints/metafile.yml",
+      "sha256": "31fd2d3be195057b9f981f3cb5869ab056c541f4fecf9f6a93bec4fff5dc61fc"
+    },
+    {
+      "file": "configs/g_reppoints/README.md",
+      "sha256": "b4de43e6f4bd00187d0fb655891109f9e681877b60f6c52b5a61cc50bcdf0b65"
+    },
+    {
+      "file": "configs/gliding_vertex/gliding_vertex_r50_fpn_1x_dota_le90.py",
+      "sha256": "c0dde57e9a2aaaadec61fbc3deb60a90c88f1a1396211e1e36970c12b102a5cf"
+    },
+    {
+      "file": "configs/gliding_vertex/metafile.yml",
+      "sha256": "c1d6a5561d820318206fec55af0750da7db8e67568151552b7fb92605fdeb35a"
+    },
+    {
+      "file": "configs/gliding_vertex/README.md",
+      "sha256": "85170fb7a2319d4bbe9e48e95a37a51c4337078a2cc9618752057da0ef1fd0e6"
+    },
+    {
+      "file": "configs/gwd/metafile.yml",
+      "sha256": "01acd616e992e1e5ea08faad691f78c0c0ce612899e9159af87142dc0708e08a"
+    },
+    {
+      "file": "configs/gwd/README.md",
+      "sha256": "17f45678ec41a72c974cc4c029524c966388c055103039ec292ba9f974c055f3"
+    },
+    {
+      "file": "configs/gwd/rotated_retinanet_hbb_gwd_r50_fpn_1x_dota_oc.py",
+      "sha256": "999046ed2f4a78d8db0910dc223503c189a82cf95752b77043b67b4b8f56752e"
+    },
+    {
+      "file": "configs/gwd/rotated_retinanet_obb_gwd_r50_fpn_1x_dota_le135.py",
+      "sha256": "25f520a313949c3c390d804e3cd55471d087267ec52cfba11a97e1eb28bb0ae3"
+    },
+    {
+      "file": "configs/gwd/rotated_retinanet_obb_gwd_r50_fpn_1x_dota_le90.py",
+      "sha256": "8ad76ff87386783830f209fdd913eee890639d19e75897be92bfae9ea2ea3691"
+    },
+    {
+      "file": "configs/gzda/continue_hooks.py",
+      "sha256": "b21f499e2e42ba0edde2a9dbc4e6ab87209f52741397fe79476392f192d99bf5"
+    },
+    {
+      "file": "configs/gzda/evaluate_large_csv.py",
+      "sha256": "de1bb4b3c7b6d42e5d608596a08a7a4e4eefdfd07c39f94b9260a0da00970d91"
+    },
+    {
+      "file": "configs/gzda/export_test_results.py",
+      "sha256": "af2a4e5dac022d54fda3c152e25b05285fbed3a9b3dfad8b5a9ff4e8210c8ebb"
+    },
+    {
+      "file": "configs/gzda/gzda_dataset.py",
+      "sha256": "95928a29efd2a195e11b585745fb268275634f68773a24ba0af5f7ec9c0f7e6c"
+    },
+    {
+      "file": "configs/gzda/infer_large_csv.py",
+      "sha256": "338897e9b6bbe1b1fdd201102e8bd4e588efa11b573792f29340c4349fa46522"
+    },
+    {
+      "file": "configs/gzda/infer_large_gpu7.sh",
+      "sha256": "b71dc35036d02a2e83c8201aec6f9d219a3bdd3aab69d69ead04dbcb3fbf1411"
+    },
+    {
+      "file": "configs/gzda/README.md",
+      "sha256": "9203fb9ede2d1e32094d57db164a53735795537ea944147da930cd727d523dfc"
+    },
+    {
+      "file": "configs/gzda/scene_branch.py",
+      "sha256": "dbe82de78a82aa044b50cc85a6ebca6b79531ff1be3004793f60771278da6f71"
+    },
+    {
+      "file": "configs/gzda/scene_hooks.py",
+      "sha256": "6b3b58b43e510cad70bfe03090b1a9fbbecc1a2e64b3daecb35793cb81d12c83"
+    },
+    {
+      "file": "configs/gzda/strip_s_gzda.py",
+      "sha256": "1b90424c1e2f5c6970f0335ba6108dcd0e6271aa3f9a9499d37e9530b5c50098"
+    },
+    {
+      "file": "configs/gzda/strip_s_gzda_continue_6ep.py",
+      "sha256": "fa73b8a71de0e306eef80c66ec8c5324a5253ba5978e2b224a8e5a825250a82f"
+    },
+    {
+      "file": "configs/gzda/strip_s_gzda_scene.py",
+      "sha256": "7942bbd1018a14ddc62526d4e176b6a3eadeddb7753f0a90fe7a8ca7a67ea3b7"
+    },
+    {
+      "file": "configs/gzda/test_gpu7.sh",
+      "sha256": "8d0918b26e7662675a19bfd11782a61b430b4ed855e1dbafd77cf4ca6d9f522e"
+    },
+    {
+      "file": "configs/gzda/test_precision.py",
+      "sha256": "75cb24b43e5b2254855aab27ee493f3e169cd6e8626203cd59a072833a8d5252"
+    },
+    {
+      "file": "configs/gzda/train_continue_gpu7.sh",
+      "sha256": "d916612f439f26fe7a993dc1f50ad87a8c4a5de46e43625cf3cd75900b3e7565"
+    },
+    {
+      "file": "configs/gzda/train_gpu5.sh",
+      "sha256": "cf052bb8b594f669c660575c8465bd37f477902e06b6e9338f5d2e5b99b29195"
+    },
+    {
+      "file": "configs/gzda/train_gpu7.sh",
+      "sha256": "4efd9cc991c5b4a86e3310b900011240b1cfff10a2aa9b82142852e6ec3a1900"
+    },
+    {
+      "file": "configs/gzda/validate_smoke.py",
+      "sha256": "3f37ad42063810d13e72564ea273b96ed110bb96493e778da8d0797d0d5cc539"
+    },
+    {
+      "file": "configs/gzda/watch_continue.py",
+      "sha256": "69e1ac6aa390a30d1c4ba833021ce2d2752f3b982339879a685f4e95fc0f0e0d"
+    },
+    {
+      "file": "configs/gzda/watch_validation.py",
+      "sha256": "0a480362ba914d229c869bbac5cd8db3fe8efb6d63ec04aeb317fa25a1fd759d"
+    },
+    {
+      "file": "configs/kfiou/metafile.yml",
+      "sha256": "7137c412beb0273e749b62c36bfdde130f79b21759314fbab236c26606ffb513"
+    },
+    {
+      "file": "configs/kfiou/r3det_kfiou_ln_r50_fpn_1x_dota_oc.py",
+      "sha256": "16f139ddfeb5c1ff6ab0d9817ad75116e28321b0265981ff890e2ed315c93714"
+    },
+    {
+      "file": "configs/kfiou/r3det_kfiou_ln_swin_tiny_adamw_fpn_1x_dota_ms_rr_oc.py",
+      "sha256": "f24585c8b897b438375fafa5f68b35e2681f89bcc5b32750425a268d281004f2"
+    },
+    {
+      "file": "configs/kfiou/r3det_kfiou_ln_swin_tiny_adamw_fpn_2x_dota_ms_rr_oc.py",
+      "sha256": "56fda2eb6597919fa6cc5ad2a44648c691a3ecb7abe6979ec0b75481c43912df"
+    },
+    {
+      "file": "configs/kfiou/r3det_refine_kfiou_ln_r50_fpn_1x_dota_oc.py",
+      "sha256": "155c6f28c7c0e1b95c2bc4c02586fddfee1a3950f79e3707a9890335c13f24f3"
+    },
+    {
+      "file": "configs/kfiou/r3det_tiny_kfiou_ln_r50_fpn_1x_dota_oc.py",
+      "sha256": "83a7846cd2331cfc9c675110009a314ecea3e3065d6bada6f509c61a3d9b46cb"
+    },
+    {
+      "file": "configs/kfiou/README.md",
+      "sha256": "36e02bcca130f55ac873d824e18ae263a08e21bf3e3125511a979a320b2f6835"
+    },
+    {
+      "file": "configs/kfiou/roi_trans_kfiou_ln_r50_fpn_1x_dota_le90.py",
+      "sha256": "572222f766d417d8a3693b56ba10bd670f6faa66a4089a917f599144f673f5f0"
+    },
+    {
+      "file": "configs/kfiou/roi_trans_kfiou_ln_r50_fpn_1x_dota_ms_rr_le90.py",
+      "sha256": "d1516cec8e1428abde3f68388d8e65b8215dcf65f869e5f14b3c94b7872890ad"
+    },
+    {
+      "file": "configs/kfiou/roi_trans_kfiou_ln_swin_tiny_fpn_1x_dota_le90.py",
+      "sha256": "d424e4d9e8c1528676a86dfe0e4f41a9e34074c9bdc4185b01f1b976f4ae19e9"
+    },
+    {
+      "file": "configs/kfiou/roi_trans_kfiou_ln_swin_tiny_fpn_1x_dota_ms_rr_le90.py",
+      "sha256": "3d028e76f3abab74d814de92f96ffcf7714363f107867e74872878907e494ebd"
+    },
+    {
+      "file": "configs/kfiou/rotated_retinanet_hbb_kfiou_r50_fpn_1x_dota_le135.py",
+      "sha256": "9617d8ee473c2b9a064bf8989243715df26a28a1676b8fa91d906e1272c5c7c9"
+    },
+    {
+      "file": "configs/kfiou/rotated_retinanet_hbb_kfiou_r50_fpn_1x_dota_le90.py",
+      "sha256": "224625efee4eb34baf3ba30b1912885b8aac03966ffdb28e01ae5e52180ed1f0"
+    },
+    {
+      "file": "configs/kfiou/rotated_retinanet_hbb_kfiou_r50_fpn_1x_dota_oc.py",
+      "sha256": "a5c148aa8b6522199e8b31f76e76913eb4d705b2cf573461ab46660d6f152965"
+    },
+    {
+      "file": "configs/kfiou/rotated_retinanet_obb_kfiou_r50_fpn_1x_dota_le135.py",
+      "sha256": "8d946107cedde15611369927e88005e8d46856792edafbf427d47e76619c0520"
+    },
+    {
+      "file": "configs/kfiou/rotated_retinanet_obb_kfiou_r50_fpn_1x_dota_le90.py",
+      "sha256": "d830399b413abc544f2c9033953f5aef4e95ede7c47149379ce6e07e4bc0ff94"
+    },
+    {
+      "file": "configs/kfiou/s2anet_kfiou_ln_r50_fpn_1x_dota_le135.py",
+      "sha256": "cf67e5f394706de7436e6e67bcf554587e6d29977cca25affcbdefff11a00128"
+    },
+    {
+      "file": "configs/kld/metafile.yml",
+      "sha256": "3f63b565fe918d1f9665cda7b08fcd83821d4bc6764cede2cb3ecfcbfdbe33bc"
+    },
+    {
+      "file": "configs/kld/r3det_kld_r50_fpn_1x_dota_oc.py",
+      "sha256": "53e92a42bf57c6000bce42aebd27a2ff7c9774d828bfc8ad2bf67a9ea9edd1ff"
+    },
+    {
+      "file": "configs/kld/r3det_kld_stable_r50_fpn_1x_dota_oc.py",
+      "sha256": "91b5a88ea7ab2791c68f2729fe3e8fd4c91f2fe42f95f1fb418031754f16bb44"
+    },
+    {
+      "file": "configs/kld/r3det_tiny_kld_r50_fpn_1x_dota_oc.py",
+      "sha256": "fbeff555a46d9c89fb3d6606d14b11407967974c79ec93b4d2e5c71b98123078"
+    },
+    {
+      "file": "configs/kld/README.md",
+      "sha256": "5a220cd58aa09db2c73f5b5b6564df3f0df6c6ee6567f9e04285bf87a2f13908"
+    },
+    {
+      "file": "configs/kld/rotated_retinanet_hbb_kld_r50_fpn_1x_dota_oc.py",
+      "sha256": "606e75cb920bb4f54dbe9f42acab283bddae62085d646e23b52e797b2c6121b3"
+    },
+    {
+      "file": "configs/kld/rotated_retinanet_hbb_kld_stable_r50_fpn_1x_dota_oc.py",
+      "sha256": "c716d51e7b6bed4e636ee137076163a4aedf1d2c41e784ae76af6d094140d8d2"
+    },
+    {
+      "file": "configs/kld/rotated_retinanet_hbb_kld_stable_r50_fpn_6x_hrsc_rr_oc.py",
+      "sha256": "72f2517ecb1c0572ad3f0a7ee52a65330e24d6fd012f9103a6ebdb0ab77380d9"
+    },
+    {
+      "file": "configs/kld/rotated_retinanet_obb_kld_r50_fpn_1x_dota_le135.py",
+      "sha256": "007709b4cf2a0baba205275d2dc3bd790a4206dc011470a30cba2c3052bf77c5"
+    },
+    {
+      "file": "configs/kld/rotated_retinanet_obb_kld_r50_fpn_1x_dota_le90.py",
+      "sha256": "a0b19eaa8115e3696b54e0b0de0041fccbaa59b784fef945ff47f90c48dfd4f6"
+    },
+    {
+      "file": "configs/kld/rotated_retinanet_obb_kld_stable_r50_adamw_fpn_1x_dota_le90.py",
+      "sha256": "6544cc6c128a151f38c0908ceabae552f8b970eba3880ef91307daafdf4ba8d5"
+    },
+    {
+      "file": "configs/kld/rotated_retinanet_obb_kld_stable_r50_fpn_1x_dota_le90.py",
+      "sha256": "8fda89f9317098c428e18cce36d9f7cdfc040c356f050ae9b41d2fd06ee04956"
+    },
+    {
+      "file": "configs/kld/rotated_retinanet_obb_kld_stable_r50_fpn_6x_hrsc_rr_le90.py",
+      "sha256": "d83a680b1ee09cebd397ef8dff633e1a5c4c45f481fe6467a0128a62db99de45"
+    },
+    {
+      "file": "configs/oriented_rcnn/metafile.yml",
+      "sha256": "7f7bddb3504217145eab903a03aa7ae72a2edfa30674581fca3e397c7d45afb4"
+    },
+    {
+      "file": "configs/oriented_rcnn/oriented_rcnn_r50_fpn_1x_dota_le90.py",
+      "sha256": "d9d630b65628391ff85346e799f6da5866b634dd6936add2e1726e56ab5f3fec"
+    },
+    {
+      "file": "configs/oriented_rcnn/oriented_rcnn_r50_fpn_1x_dota_le90.py_cam.jpg",
+      "sha256": "46f98fcc9299c8f6eb89d79db6cfecf48f8820a3a89ef8f2849004c56cd1217f"
+    },
+    {
+      "file": "configs/oriented_rcnn/oriented_rcnn_r50_fpn_1x_fair_le90.py",
+      "sha256": "cbecb25e30e7c18f3ea49428bb2d4266bdaedf7f02ba4ad1b101fefac008f0e0"
+    },
+    {
+      "file": "configs/oriented_rcnn/oriented_rcnn_r50_fpn_6x_hrsid_le90.py",
+      "sha256": "57a6c04aecb9ec08ed37c8b624c2033ab9ad22bbb120489c1761f3fe70c14fec"
+    },
+    {
+      "file": "configs/oriented_rcnn/oriented_rcnn_r50_fpn_6x_ssdd_le90.py",
+      "sha256": "07b4d516ae7fb735a58cf1635f59c424af30497022adcb8d95734cebd525bd9b"
+    },
+    {
+      "file": "configs/oriented_rcnn/oriented_rcnn_r50_fpn_fp16_1x_dota_le90.py",
+      "sha256": "67a06188219712c004c646c7d9ccb9c571e662777e6f1ed0c83e5a2f596c6e3e"
+    },
+    {
+      "file": "configs/oriented_rcnn/oriented_rcnn_swin_tiny_fpn_1x_dota_le90.py",
+      "sha256": "95e6b141dde0330b7b0a594221050f7cbd312713002e898e9a4f1e7462dae6ad"
+    },
+    {
+      "file": "configs/oriented_rcnn/README.md",
+      "sha256": "ec84d0a723efaec3f86b22768897bc591c8515889be6dfdf64c6ad53a3055169"
+    },
+    {
+      "file": "configs/oriented_reppoints/metafile.yml",
+      "sha256": "5afb087b19acfb18e8ccb6ede0427b53a2d069a7b406bbe660dd60e58d38537e"
+    },
+    {
+      "file": "configs/oriented_reppoints/oriented_reppoints_r50_fpn_1x_dota_le135.py",
+      "sha256": "1a426baa7b27351a010d9c00adcbd663191bb3bf16f57956f0ef582039b86cef"
+    },
+    {
+      "file": "configs/oriented_reppoints/oriented_reppoints_r50_fpn_40e_dota_ms_le135.py",
+      "sha256": "02dc598a49ad587b28215fd9950235881d708ac4e041d8c3b94c3ba3d6897ad1"
+    },
+    {
+      "file": "configs/oriented_reppoints/README.md",
+      "sha256": "5c02856ade82aa00278150076bf447c4b666617269ff148d96805356f034d79c"
+    },
+    {
+      "file": "configs/pkinet/pkinet_s_fpn_1x_dota_le90.py",
+      "sha256": "260b6c8278f082709f35c6bc2a1ebde458e40b4b2d3072d7000b4b145b8f0859"
+    },
+    {
+      "file": "configs/r3det/metafile.yml",
+      "sha256": "9fdace3805c93d3e57ada2d6a444f2b1fac1df5635d993b9da9df77afdac5534"
+    },
+    {
+      "file": "configs/r3det/r3det_r50_fpn_1x_dota_oc.py",
+      "sha256": "f6a5eed9d592b1b2441b68030c1ca2f17a500aae6904afc4a3fc8ca46bbe12f4"
+    },
+    {
+      "file": "configs/r3det/r3det_refine_r50_fpn_1x_dota_oc.py",
+      "sha256": "4c9fdf63bc65692c5ff8d05f2006d3b60c514fa3e992d5422d211bfde2a6f23c"
+    },
+    {
+      "file": "configs/r3det/r3det_tiny_r50_fpn_1x_dota_oc.py",
+      "sha256": "f8948b0b16ab2e594e1630cd9add44dabcf2a5c5a508e265a357c0e67a6a30fd"
+    },
+    {
+      "file": "configs/r3det/README.md",
+      "sha256": "e9b210e4add3f83d0d7bfcde85cdd0ab628f4fc0bf7d55826daa6f64eb949834"
+    },
+    {
+      "file": "configs/redet/metafile.yml",
+      "sha256": "a83594cba2215b04460d9fe1a4820de5d3e3c9745f04e75b9d6d2d9ae2a2142c"
+    },
+    {
+      "file": "configs/redet/README.md",
+      "sha256": "2c6851f30473fc6ad0e66832655977eeebb1010c6ef09efacc453137e151dde0"
+    },
+    {
+      "file": "configs/redet/redet_re50_refpn_1x_dota_le90.py",
+      "sha256": "be95a0c4143dadb961985c4478bafc197debe39c459775c0516f412b57e9bd91"
+    },
+    {
+      "file": "configs/redet/redet_re50_refpn_1x_dota_ms_rr_le90.py",
+      "sha256": "3934e7c1cc266036c073e181c871a94562dcdc91289e0195f45a36a034cc6454"
+    },
+    {
+      "file": "configs/redet/redet_re50_refpn_3x_hrsc_le90.py",
+      "sha256": "5f202a623440b2b13e06bb0f5801499e1929d74e7525afdf581ec5f9c28e1dd0"
+    },
+    {
+      "file": "configs/redet/redet_re50_refpn_fp16_1x_dota_le90.py",
+      "sha256": "3197597f993e6df6af13576a35e6f667d4cf2903098300416ee96f355a6f3a66"
+    },
+    {
+      "file": "configs/roi_trans/metafile.yml",
+      "sha256": "d97db07b7ed3cb64adf8ce24bdbb0dbd6b5d248458384216e3f30c874cfdb93e"
+    },
+    {
+      "file": "configs/roi_trans/README.md",
+      "sha256": "6535ae6227efad95139d4c81e0ca2f1c8e1d4d6fef918e48aaea9206f8b18175"
+    },
+    {
+      "file": "configs/roi_trans/roi_trans_r50_fpn_1x_dota_le135.py",
+      "sha256": "4b12ef3b57290970fa906f974791b4a83cf4b3ce54c27e139c0f8ab9909b61dc"
+    },
+    {
+      "file": "configs/roi_trans/roi_trans_r50_fpn_1x_dota_le90.py",
+      "sha256": "0471be2b6095c17a03a0aa56925fd36541dd4fda8e0c30d01ea86d8549a27279"
+    },
+    {
+      "file": "configs/roi_trans/roi_trans_r50_fpn_1x_dota_ms_le90.py",
+      "sha256": "909d25641caee88c6dfe7c1ffc1877a8efeead7bfb2bf0f2ff9577fbed8eaa85"
+    },
+    {
+      "file": "configs/roi_trans/roi_trans_r50_fpn_1x_dota_ms_rr_le90.py",
+      "sha256": "44cdca23a9a58cf5117c929b839599ae9422b363073209ea4dff2d6e5857fa33"
+    },
+    {
+      "file": "configs/roi_trans/roi_trans_r50_fpn_1x_dota_oc.py",
+      "sha256": "7952899c33fc1be417f21a52b2fbb91a7399fa3e933eeaa552e0e6c56b889991"
+    },
+    {
+      "file": "configs/roi_trans/roi_trans_r50_fpn_fp16_1x_dota_le90.py",
+      "sha256": "f76b634cae99cc6a91b2c5cecb373cecccc29ce1c957466b3221ceecaf4a5811"
+    },
+    {
+      "file": "configs/roi_trans/roi_trans_swin_tiny_fpn_1x_dota_le90.py",
+      "sha256": "6f465b572af95d1f3b5e14b887ab01897518efef4c558cf4f5df2e4f28d6fa61"
+    },
+    {
+      "file": "configs/rotated_atss/metafile.yml",
+      "sha256": "36e507ee42c37533ac184822f888a52586491899f14235f3a4c64a683dd95099"
+    },
+    {
+      "file": "configs/rotated_atss/r3det_atss_r50_fpn_1x_dota_oc.py",
+      "sha256": "51be84ae86466b1a67e7c83c5ab0947b8bca436769a7f4fd8a0a69ecb4c9c777"
+    },
+    {
+      "file": "configs/rotated_atss/README.md",
+      "sha256": "3c5619bb211e429178eaf236a9c77f96045432bb8a8052b24edf6e6a757bce78"
+    },
+    {
+      "file": "configs/rotated_atss/rotated_atss_hbb_r50_fpn_1x_dota_oc.py",
+      "sha256": "aeea1e4169e3096367101a31f5b574c610743d05d9511ce01736591e11c30690"
+    },
+    {
+      "file": "configs/rotated_atss/rotated_atss_obb_r50_fpn_1x_dota_le135.py",
+      "sha256": "1804328b66268595585de93b0624d8e232bf0da53e296cb7be4ad62525147bbc"
+    },
+    {
+      "file": "configs/rotated_atss/rotated_atss_obb_r50_fpn_1x_dota_le90.py",
+      "sha256": "8f51dbe66c90ae1aa6eca6484547ec7703c12e249776d238f56be6fd3dccedd6"
+    },
+    {
+      "file": "configs/rotated_faster_rcnn/metafile.yml",
+      "sha256": "0f6d87f6f3a8250af350c1d02942c7f2efc32ed2b9f66d2c954de7e4b9edfed5"
+    },
+    {
+      "file": "configs/rotated_faster_rcnn/README.md",
+      "sha256": "b8b4d378f2d315d893a52bbec01f7e220e6886ae160a31839f16dea1960c35f8"
+    },
+    {
+      "file": "configs/rotated_faster_rcnn/rotated_faster_rcnn_r50_fpn_1x_dota_le90.py",
+      "sha256": "3895987cf3d3e1a301d9d022a5c240ceba8df938f7313c85989fd0fb419a13e9"
+    },
+    {
+      "file": "configs/rotated_fcos/metafile.yml",
+      "sha256": "a7b4d0e55b47fa096833793e0bccbdd2725e05ae05e998f571ed2344bdfeb0b1"
+    },
+    {
+      "file": "configs/rotated_fcos/README.md",
+      "sha256": "1dc0d785143d940aa3e0788311a62e09193e1552ee584e2b93b61aa9bcfee81b"
+    },
+    {
+      "file": "configs/rotated_fcos/rotated_fcos_csl_gaussian_r50_fpn_1x_dota_le90.py",
+      "sha256": "0ecb8e5fbffe169f65b8e3fcbcda04e22ba127d56eb5350c6456f10f1f945741"
+    },
+    {
+      "file": "configs/rotated_fcos/rotated_fcos_kld_r50_fpn_1x_dota_le90.py",
+      "sha256": "ddd67075a288e1b47449dff553d360f3ae63ac11aba28a02ce3952fad930e73c"
+    },
+    {
+      "file": "configs/rotated_fcos/rotated_fcos_r50_fpn_1x_dota_le90.py",
+      "sha256": "75f3cf727e1c243050cc31ddaf10e953b83c42d6a82a10f7012d5469f1536524"
+    },
+    {
+      "file": "configs/rotated_fcos/rotated_fcos_sep_angle_r50_fpn_1x_dota_le90.py",
+      "sha256": "d665dedad71d0c7f08da43aa305e580dde10d9c979d05756c9ee68c404547c1d"
+    },
+    {
+      "file": "configs/rotated_reppoints/metafile.yml",
+      "sha256": "df833b34a5cfd4ad8f51c1d392b968741254e96c58e696ce324fd030db3f6b55"
+    },
+    {
+      "file": "configs/rotated_reppoints/README.md",
+      "sha256": "6ffac30cddde35e6cf5d8c921628051de875aff5a08802c9cfb031acb32a2f77"
+    },
+    {
+      "file": "configs/rotated_reppoints/rotated_reppoints_r50_fpn_1x_dota_le135.py",
+      "sha256": "513173c2f4283c18ba2c89850cc9b739b05243a7cafab8906e34e9f83fd1ec19"
+    },
+    {
+      "file": "configs/rotated_reppoints/rotated_reppoints_r50_fpn_1x_dota_oc.py",
+      "sha256": "33d4cdf309e8480eb5c98109cb49c449e9562f127ac7b3854679ad1f83d88578"
+    },
+    {
+      "file": "configs/rotated_retinanet/metafile.yml",
+      "sha256": "fca9804de61a5cf071822c53fc7b189d2d72d50c5b2d24d436585e440f8ca5dd"
+    },
+    {
+      "file": "configs/rotated_retinanet/README.md",
+      "sha256": "68784c2a332fcaa65d91b183bb9d03e33007374d7471cd09815cf6d4726ab258"
+    },
+    {
+      "file": "configs/rotated_retinanet/rotated_retinanet_hbb_r50_fpn_1x_dota_le135.py",
+      "sha256": "ba220c84273faecbe926613d739be9c2c404c10ccc37578ba3066969dcecf871"
+    },
+    {
+      "file": "configs/rotated_retinanet/rotated_retinanet_hbb_r50_fpn_1x_dota_le90.py",
+      "sha256": "39beeedbf2a7a645dccc7b372d2c9d4aa05af0daad71636afe0487eedadc76aa"
+    },
+    {
+      "file": "configs/rotated_retinanet/rotated_retinanet_hbb_r50_fpn_1x_dota_oc.py",
+      "sha256": "3bff56507ce7a2462b0f33ad8c3b7f504cb98fe3ea77747db244cb2bb3d9438f"
+    },
+    {
+      "file": "configs/rotated_retinanet/rotated_retinanet_hbb_r50_fpn_6x_hrsc_rr_oc.py",
+      "sha256": "f3dfacd90813cbf1f68741697b4319f0079dd82e803431a11f116a16accc64ca"
+    },
+    {
+      "file": "configs/rotated_retinanet/rotated_retinanet_obb_r50_fpn_1x_dota_le135.py",
+      "sha256": "8c3c944af7f96ff72627b329cf583280de624f9f60b837fba89bfda157709873"
+    },
+    {
+      "file": "configs/rotated_retinanet/rotated_retinanet_obb_r50_fpn_1x_dota_le90.py",
+      "sha256": "b105ba8dbd5fea6ce8100f455cd24ff117c9c4411beed65961b2f731dd20df98"
+    },
+    {
+      "file": "configs/rotated_retinanet/rotated_retinanet_obb_r50_fpn_1x_dota_ms_rr_le90.py",
+      "sha256": "bbbf46ef24f31d6d9d010585888326de53229a70e2b6a557304535f4c9065f3d"
+    },
+    {
+      "file": "configs/rotated_retinanet/rotated_retinanet_obb_r50_fpn_1x_dota_oc.py",
+      "sha256": "6310e0a523fbd0a877afaf9ab68f5069a6a2ae2d729e39cf259bf097da23bbaf"
+    },
+    {
+      "file": "configs/rotated_retinanet/rotated_retinanet_obb_r50_fpn_6x_hrsc_rr_le90.py",
+      "sha256": "95c6f1cb279e648ecba3611db02a74a8dd4693440e1b165e35b1b6bcd25b35fb"
+    },
+    {
+      "file": "configs/rotated_retinanet/rotated_retinanet_obb_r50_fpn_fp16_1x_dota_le90.py",
+      "sha256": "40849db9aa1271110c1a127aeaeff3be45244f897e30bfe1d6b6d783d38c66dd"
+    },
+    {
+      "file": "configs/s2anet/metafile.yml",
+      "sha256": "f5a15f9081d315a7abee30fe41e0229ad0ca8707211e18b9d6bec0aae6822342"
+    },
+    {
+      "file": "configs/s2anet/README.md",
+      "sha256": "652aaabd98c5f95dda4f5984a283491420ae73d3a7fe235604032ea92895bf80"
+    },
+    {
+      "file": "configs/s2anet/s2anet_r50_fpn_1x_dota_le135.py",
+      "sha256": "c41a2c948b76293fc1dca70d85845d5cd5ddee87789aa13da46e4d80efdb7a8f"
+    },
+    {
+      "file": "configs/s2anet/s2anet_r50_fpn_3x_hrsc_le135.py",
+      "sha256": "b750b2a7c00b2c912499070082e383f01b8ba35915723efc65527cf6d1041d86"
+    },
+    {
+      "file": "configs/s2anet/s2anet_r50_fpn_fp16_1x_dota_le135.py",
+      "sha256": "fbad3eda4879845051f7908159c6d1f21a6c5405fd20deeabe890e49345e00e9"
+    },
+    {
+      "file": "configs/sasm_reppoints/metafile.yml",
+      "sha256": "b09ac598492acaf1f5ea7c49dbcda59c4f8b8f3248b68772fab8377197d88109"
+    },
+    {
+      "file": "configs/sasm_reppoints/README.md",
+      "sha256": "107606a86e877bf842a6dc05e8c3f767ea272000ccfd7f3feb46da4a5bee0712"
+    },
+    {
+      "file": "configs/sasm_reppoints/sasm_reppoints_r50_fpn_1x_dota_oc.py",
+      "sha256": "570ae3f85ed483e18d350eeacd3feb86cc3888deecac3fcf54cdb9c961e88f49"
+    },
+    {
+      "file": "configs/strip_rcnn/strip_rcnn_s_fpn_1x_dior_le90.py",
+      "sha256": "562a89bb5d91dbea81f4fd54a6cc74f2204329b59f5440c62de5685ee9d8d0cc"
+    },
+    {
+      "file": "configs/strip_rcnn/strip_rcnn_s_fpn_1x_dota15_le90.py",
+      "sha256": "38dca41fb8f1e20f0a8d3658d6d89e7e47199bced2518dbe63ef8c5578adad0d"
+    },
+    {
+      "file": "configs/strip_rcnn/strip_rcnn_s_fpn_1x_dota_le90.py",
+      "sha256": "4766e4485bf10f5cc66ae6fc1aea285bd8dc854918b9a4852c68c5df60dfdfaf"
+    },
+    {
+      "file": "configs/strip_rcnn/strip_rcnn_s_fpn_1x_fair_le90.py",
+      "sha256": "982bed9e800f57001e481239b5be0052ab0f22843e1a06f05e6a9609aa165bd3"
+    },
+    {
+      "file": "configs/strip_rcnn/strip_rcnn_s_fpn_3x_hrsc_le90.py",
+      "sha256": "8ed27e17eb3255c32268c6e589d2f8c71fc7a505acce23e351d11fbd48f41bd7"
+    },
+    {
+      "file": "configs/strip_rcnn/strip_rcnn_t_fpn_1x_dota_le90.py",
+      "sha256": "516e42618235a149a8c712c90a2971cdce40833e3f6613cca952be1ddc35baba"
+    },
+    {
+      "file": "LICENSE",
+      "sha256": "fa4b06f7751c68d695eb3dc713616e1dcf09d12aa4a3b6196b8a9e0f4ff903d4"
+    },
+    {
+      "file": "MANIFEST.in",
+      "sha256": "1d5b8a92611f0a354df24b3843b2062f93756dcc90fbd2920d57cb0675479e22"
+    },
+    {
+      "file": "mmrotate/__init__.py",
+      "sha256": "32f1d37a699319ac671e0dd962d03e9b2b2b004521c85b969ddcf902b51ca7bd"
+    },
+    {
+      "file": "mmrotate/apis/__init__.py",
+      "sha256": "5a0c9a636a4c3ee2e4bedc7a670fa5bf8bbcf44e2d741e9c46d02e9ab3866f5f"
+    },
+    {
+      "file": "mmrotate/apis/inference.py",
+      "sha256": "69ad5506136b3b6d34abb45704600ea3fbd52d62901f9c0ae65bbc6019489cde"
+    },
+    {
+      "file": "mmrotate/apis/train.py",
+      "sha256": "06ba4f827f7b5b6392e3f8cc889c116d837cc7ea44ac55778a93e44f32b26008"
+    },
+    {
+      "file": "mmrotate/core/__init__.py",
+      "sha256": "1bdafebfd30e431c021bd7167edd07c37e43f86c6c32251e43156bf159b587ff"
+    },
+    {
+      "file": "mmrotate/core/anchor/__init__.py",
+      "sha256": "b108cfb9d258f5cb7411695417ede368a2d5d7f2d2fee83b089d3e258d0cc006"
+    },
+    {
+      "file": "mmrotate/core/anchor/anchor_generator.py",
+      "sha256": "905df765f285783e1622387dafa58dd1c2f5281fe5abee1ccda15f4668682e72"
+    },
+    {
+      "file": "mmrotate/core/anchor/builder.py",
+      "sha256": "ee3829e08d26f897c3cbb608bed854e174b9057ade954ccc7d3b67c5ed733f6c"
+    },
+    {
+      "file": "mmrotate/core/anchor/utils.py",
+      "sha256": "424300b983640c42583e6dcff3343d01334c18794b693bdaa4e763d1313f07f1"
+    },
+    {
+      "file": "mmrotate/core/bbox/__init__.py",
+      "sha256": "fadc1fce8cd226bbf8f8e62cfdf3a17a1bca0c9c5cbb3e8a1cbd4d2a775c5acf"
+    },
+    {
+      "file": "mmrotate/core/bbox/assigners/__init__.py",
+      "sha256": "bf2261e81ad5aca1afde5d469a385d07cca2921c0abe6d5e03d770e3bd8e4aae"
+    },
+    {
+      "file": "mmrotate/core/bbox/assigners/atss_kld_assigner.py",
+      "sha256": "3c793b5197c7033e20ed79e58f7c999f70866b4305bc67ae4335a32fbdd7406a"
+    },
+    {
+      "file": "mmrotate/core/bbox/assigners/atss_obb_assigner.py",
+      "sha256": "dc4e5deee8222e2c5dbfd8c3697240e3027771e85267f4b956278da1efbe93c2"
+    },
+    {
+      "file": "mmrotate/core/bbox/assigners/convex_assigner.py",
+      "sha256": "9b68496050f20d7d1448c88c0a7036d2221f05702fed5c4f9cf98a7b0a64460f"
+    },
+    {
+      "file": "mmrotate/core/bbox/assigners/max_convex_iou_assigner.py",
+      "sha256": "87738cf968401ca8591f65d52bc2b616ed803bffa68a70658c9a0b6a448270ba"
+    },
+    {
+      "file": "mmrotate/core/bbox/assigners/sas_assigner.py",
+      "sha256": "8f9ab7da044943e70d4961acf612bbd73166686a984487f743351d02a5bfaeb8"
+    },
+    {
+      "file": "mmrotate/core/bbox/builder.py",
+      "sha256": "3d4f2404263d9d840a8ac6cd575d259d85e4d3aff53ccaa8405b7d8a7b982312"
+    },
+    {
+      "file": "mmrotate/core/bbox/coder/__init__.py",
+      "sha256": "230eee1b712008c9cc426ace1615506ae50d6f294032f7df265573eae248ecff"
+    },
+    {
+      "file": "mmrotate/core/bbox/coder/angle_coder.py",
+      "sha256": "97a3c079b12e11a55cd428068be16a2a92eec75e5ea6c6baa362a7fb60308b95"
+    },
+    {
+      "file": "mmrotate/core/bbox/coder/delta_midpointoffset_rbbox_coder.py",
+      "sha256": "dc82ad7d079ebd7d3f25e9cc949dcfa3db818d43d7b37a00c1bdf2be2f131af5"
+    },
+    {
+      "file": "mmrotate/core/bbox/coder/delta_xywha_hbbox_coder.py",
+      "sha256": "195131e67c8a62817b7335baa13022e10169ab39a8d0f4a93cc0d14bfe2be544"
+    },
+    {
+      "file": "mmrotate/core/bbox/coder/delta_xywha_rbbox_coder.py",
+      "sha256": "c8194ab705da451b127eabaa3055179cceb1f5e130f39982de10b68cc2779f6a"
+    },
+    {
+      "file": "mmrotate/core/bbox/coder/distance_angle_point_coder.py",
+      "sha256": "dfc91fe9f58fe0fb268e137e75f04758e6df21c55fefe419e890f001ffa5f09a"
+    },
+    {
+      "file": "mmrotate/core/bbox/coder/gliding_vertex_coder.py",
+      "sha256": "b4f6d69a5d675c52c6aa68a7ff3f2ef6a40a4db2bc486d04076b0a1215f0b42d"
+    },
+    {
+      "file": "mmrotate/core/bbox/iou_calculators/__init__.py",
+      "sha256": "dfb4139869d26f5ccdf39a32b4828cc6240f4d92042f5e9873af939ace4d03df"
+    },
+    {
+      "file": "mmrotate/core/bbox/iou_calculators/builder.py",
+      "sha256": "4229663449ceba273d921f6eaa1fb7320bf1482d2f3c49104fde069a33fe2bb6"
+    },
+    {
+      "file": "mmrotate/core/bbox/iou_calculators/rotate_iou2d_calculator.py",
+      "sha256": "17626a2e15bb841700eb819dcccd6a6fed01df2c0a88fbf399be6a97fbac8230"
+    },
+    {
+      "file": "mmrotate/core/bbox/samplers/__init__.py",
+      "sha256": "f9874856993f9b84e745cca75bd83329cdbbce21fc8e15fd354c6c36a53cf0b8"
+    },
+    {
+      "file": "mmrotate/core/bbox/samplers/rotate_random_sampler.py",
+      "sha256": "63b662a38b2150c0c4cfec454aafe1f0b26ddfc137c30b6cf3a11b06a29ae56c"
+    },
+    {
+      "file": "mmrotate/core/bbox/transforms.py",
+      "sha256": "e133b1cfd3f4fe8e6aeb05d4d6d93d16b0d52a89ebcdeff43d46887729f1f53c"
+    },
+    {
+      "file": "mmrotate/core/bbox/utils/__init__.py",
+      "sha256": "ed48ab83fa599ccc8d2263c485f341875d9b238a4ad0f18cbaac5172a1c18230"
+    },
+    {
+      "file": "mmrotate/core/bbox/utils/gmm.py",
+      "sha256": "434f3f1727dd5a4c4091f04fa6f839daea82e59076af4711d55b907810c9631d"
+    },
+    {
+      "file": "mmrotate/core/evaluation/__init__.py",
+      "sha256": "79c7c505d4d4b6e75965dc4ac596da14e04b27e1ed708f753623545d7fb9da1e"
+    },
+    {
+      "file": "mmrotate/core/evaluation/eval_map.py",
+      "sha256": "91326dc5f34670aca058b8c5e2f49d5a49ccaf16859b49d60a9d25fc7287c600"
+    },
+    {
+      "file": "mmrotate/core/patch/__init__.py",
+      "sha256": "80265b462be488c247a97e07644569f38b50fbd96fe6c84cdda38945c2027c20"
+    },
+    {
+      "file": "mmrotate/core/patch/merge_results.py",
+      "sha256": "03b4f6e96921d2cff73100a471d1e14169fe11150d00d8d311b8ce55cc8f8609"
+    },
+    {
+      "file": "mmrotate/core/patch/split.py",
+      "sha256": "4e384e674c8eb7e6ac0c0f919f3c09a757fa1f223273036810c86280ae1e94c8"
+    },
+    {
+      "file": "mmrotate/core/post_processing/__init__.py",
+      "sha256": "ed264f0d60476b1a3caf0b222ebce60d02c5155bf137d110444dcdaec47db609"
+    },
+    {
+      "file": "mmrotate/core/post_processing/bbox_nms_rotated.py",
+      "sha256": "84ddfaac31040d1d6739b2f54ca651e5194218ec4f4a81fa5a7fbedd4e996fbe"
+    },
+    {
+      "file": "mmrotate/core/visualization/__init__.py",
+      "sha256": "0d5bec887561ddc038a1fce6cd1514e1cf9d98aa1aa26504ca086dd8d8fd2eee"
+    },
+    {
+      "file": "mmrotate/core/visualization/image.py",
+      "sha256": "07061d8bb4b8bfcb6fcbcecca1a1f045e226b64d30a83139018ea276c11e8d6a"
+    },
+    {
+      "file": "mmrotate/core/visualization/palette.py",
+      "sha256": "595178e2455bba58f8f852a627510b74a3eaac500f71a929bbef190ab8427147"
+    },
+    {
+      "file": "mmrotate/datasets/__init__.py",
+      "sha256": "6a074039186b5b27356972458f4edf351c77ddf97cae6af39157a85acdc50f68"
+    },
+    {
+      "file": "mmrotate/datasets/builder.py",
+      "sha256": "3f026458e40b3ffbdbeb51a9c7fd60d92b50315d6113256426beb1b464bb2c44"
+    },
+    {
+      "file": "mmrotate/datasets/dior.py",
+      "sha256": "5b0cf74c856ba937dd8e7208a57323b3b98eb01fd5e8a02d547cc757b09c35e4"
+    },
+    {
+      "file": "mmrotate/datasets/dota.py",
+      "sha256": "6770fb7867b7887f202ebcaa33906be1d97cdd4c3f5755bbe8b5d495a8290c62"
+    },
+    {
+      "file": "mmrotate/datasets/dota_1_5.py",
+      "sha256": "3988d4281a2178d3f7133e1274feb583f606184709dc541395c09e2a0dfa94e9"
+    },
+    {
+      "file": "mmrotate/datasets/fair.py",
+      "sha256": "4392b8cf5d6c6022ba7fde2f7e1f6dca452ac252b5d4de966491b2763436990f"
+    },
+    {
+      "file": "mmrotate/datasets/hrsc.py",
+      "sha256": "27bab304cb56d674869e3234cb7836fa14188d246f7a0492f4cc9db3ba5cca0f"
+    },
+    {
+      "file": "mmrotate/datasets/pipelines/__init__.py",
+      "sha256": "0a07f33a76d6028ac65241c7ebd113fbb34cfec5650c37dd4db1566cb6faaeb3"
+    },
+    {
+      "file": "mmrotate/datasets/pipelines/loading.py",
+      "sha256": "f2a0c97db8f64c85fcc6a538e169ffe84214c7d82edf9bbf7f1d50c654a0bcba"
+    },
+    {
+      "file": "mmrotate/datasets/pipelines/transforms.py",
+      "sha256": "6752d7cbd07cc105f429b99fb2a90d35b62b8babee1246211a77a1553ea8f188"
+    },
+    {
+      "file": "mmrotate/datasets/sar.py",
+      "sha256": "e7c83398d9ece6157a4d82270afcf752dd6fc3fa4cbc344322c5af089cd7b518"
+    },
+    {
+      "file": "mmrotate/models/__init__.py",
+      "sha256": "9a8e5c62685ac80b9672880666ac94f156d2ffd12a0eba74396ae0c167cfe65c"
+    },
+    {
+      "file": "mmrotate/models/backbones/__init__.py",
+      "sha256": "d587c17e3b2430bd511b9ec4ab5f3741790835b55c8769f0bde7181ef05dbd26"
+    },
+    {
+      "file": "mmrotate/models/backbones/pkinet.py",
+      "sha256": "9a7b9b65be787ab88bbdbbfa1bc024dddbe82d52ec25e6dad930dfb9610ab00c"
+    },
+    {
+      "file": "mmrotate/models/backbones/re_resnet.py",
+      "sha256": "83baaa00521e336a5abe9fe6df1db653ae20d0cb9145898feb1a983ccfa30708"
+    },
+    {
+      "file": "mmrotate/models/backbones/resnet.py",
+      "sha256": "bc10ae092ced0941ea2022e8dd684bc0d0f186189fb06d9995bf2b1ee5a889b9"
+    },
+    {
+      "file": "mmrotate/models/backbones/stripnet.py",
+      "sha256": "6a0eaea281bbd7295de8d184eadad5f7e274185de08181165c69d740b2417d6d"
+    },
+    {
+      "file": "mmrotate/models/builder.py",
+      "sha256": "da653ec13e8b36bc99690e88a7829c776ffd03778e4d87f03ee3017ad868be0c"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/__init__.py",
+      "sha256": "510c4251b136a19a4d5ec08fcc424f5fdcfaeebf6540b02a86ffd21c1fb9d464"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/csl_rotated_fcos_head.py",
+      "sha256": "da2485ad13489a9b2dc0d06a3056ec5fb50fa333f6eb2839d33a4379a8bc9223"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/csl_rotated_retina_head.py",
+      "sha256": "f7fa5ca1612e10a724025d0ec5987f1efa0efdba52a5b1469048a50adc41884d"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/kfiou_odm_refine_head.py",
+      "sha256": "af969a3f57ccf44fdca0bb60fe8fb612a29adee7956603d570fb3d921f6745c3"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/kfiou_rotate_retina_head.py",
+      "sha256": "0f74cb704583bf3993b5d0b4489084d894ed08c63b81691c33aa3d8d1f4f2468"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/kfiou_rotate_retina_refine_head.py",
+      "sha256": "39ec367c26d69c55ef2ecf609f40f859fa0b18b1517f1203bec13df412da4f75"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/odm_refine_head.py",
+      "sha256": "fdf216ae231238671f9dbef0e3b016f296f5f7fb4ec0a9444eae40b7208b4219"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/oriented_reppoints_head.py",
+      "sha256": "a4400fbcd69f95885c0c0dde14364c72c8a05faa7786b9b2bbf07fa2916d62d1"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/oriented_rpn_head.py",
+      "sha256": "ae0caf0bef85ad81130798bbbe11ce3bac28c029eaa575c9e39fcb0209a65931"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/rotated_anchor_free_head.py",
+      "sha256": "4eedf44d2ef22a7e4c7ee416a38fbd38694022ed3532cab4be5e9ac4ee05ff0a"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/rotated_anchor_head.py",
+      "sha256": "740fc0a10bfe396361397bf12b413a994efd0e95331856a06fc04cd2da9a5298"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/rotated_atss_head.py",
+      "sha256": "a20c0282b7f872688c65ed42e13985ffa222138b19e48edb057717477a8a0f96"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/rotated_fcos_head.py",
+      "sha256": "39bb047b11238a83de53d1be55464f47a8f329d28658df55f0ae9a9a364cc669"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/rotated_reppoints_head.py",
+      "sha256": "e9351d3cd0f5b9cd08dfd44f6361cbd445f4d677ebc397390c879e13d4c90158"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/rotated_retina_head.py",
+      "sha256": "c13722a658e17aa8da169707de0d7dba58b4f7a62fe8c2f4eb2f495713cef06a"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/rotated_retina_refine_head.py",
+      "sha256": "4658d775f66daf8e96ca801d999752e11c11b31f3fa90b2368e1e254289348ee"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/rotated_rpn_head.py",
+      "sha256": "5391bb5424d0750061e4c30bdaa45dc106f53b23f7bc58b03479c62a546082b3"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/sam_reppoints_head.py",
+      "sha256": "c6db76bc2ccf25ff7208534453b9a9eb0bfe41b43e261ce7e371b5487d28c56d"
+    },
+    {
+      "file": "mmrotate/models/dense_heads/utils.py",
+      "sha256": "dabc527dc4840c1ed0d881db8de2db3c9dce6f16fb2ecffa4f8301c20ba8e89d"
+    },
+    {
+      "file": "mmrotate/models/detectors/__init__.py",
+      "sha256": "b760f710859039e42d4ed72d120b548973964c29a0c849dd86c26cf704160860"
+    },
+    {
+      "file": "mmrotate/models/detectors/base.py",
+      "sha256": "4583a25001228b03ecfb149b3c0d084f2fcdd6961626808be0360af69865b52d"
+    },
+    {
+      "file": "mmrotate/models/detectors/gliding_vertex.py",
+      "sha256": "e6f466769345ae92756b566c5490fce92275b858630f94118d96157eb6461ee5"
+    },
+    {
+      "file": "mmrotate/models/detectors/oriented_rcnn.py",
+      "sha256": "492be1bd359b47d6ef336b62685e258a965bb04f2974d7f65e863201b49827d8"
+    },
+    {
+      "file": "mmrotate/models/detectors/r3det.py",
+      "sha256": "e60c993e8e6bff81a8e62bd2b946b66316db5dedba907d87c6e3925a8ce2644a"
+    },
+    {
+      "file": "mmrotate/models/detectors/redet.py",
+      "sha256": "f850c5c1219f53fb6a65078e65d4bd1fb15395828bd1b6ef6e95262113bc6f27"
+    },
+    {
+      "file": "mmrotate/models/detectors/roi_transformer.py",
+      "sha256": "509e9b7739fa92698a2decd5bd941973a985c53d8a9887389f04b00755976ce4"
+    },
+    {
+      "file": "mmrotate/models/detectors/rotate_faster_rcnn.py",
+      "sha256": "98085d703d8978d19cc7fab23c9bfefd33a4f3b003b246b2ebdd291b197ba9f6"
+    },
+    {
+      "file": "mmrotate/models/detectors/rotated_fcos.py",
+      "sha256": "66f8e146da1044ecb6c4bbc5159133e1b0f0dab5b52865aed5f3cbfb0cde12b8"
+    },
+    {
+      "file": "mmrotate/models/detectors/rotated_reppoints.py",
+      "sha256": "c674453ccf485e59551076a66a4e56ad64ab07336a6e8ed8d8aa6910e2a159ad"
+    },
+    {
+      "file": "mmrotate/models/detectors/rotated_retinanet.py",
+      "sha256": "7c7e805931034b6548ef1c444d99849d84592ba675e5970809cab2c2f273d55c"
+    },
+    {
+      "file": "mmrotate/models/detectors/s2anet.py",
+      "sha256": "ff05dd4a5ff551fd5496c787db755d3818ec38ad9ae08b66985c7095af3a48b1"
+    },
+    {
+      "file": "mmrotate/models/detectors/single_stage.py",
+      "sha256": "76b2cc533f77f316b84de0afb7a437e7aaaf0a7c03eed8d09314f375a6ee8456"
+    },
+    {
+      "file": "mmrotate/models/detectors/strip_rcnn.py",
+      "sha256": "b3d46c8060da6c3f30495a23dec915be1bd5adf2aef5135b3aa6a03237652528"
+    },
+    {
+      "file": "mmrotate/models/detectors/two_stage.py",
+      "sha256": "f868c698ed7b591abae3009a3af24b895156617e40915ac1ca121e8f4b26ad98"
+    },
+    {
+      "file": "mmrotate/models/detectors/utils.py",
+      "sha256": "b25fbbb12deddd318d4df0858f46ae87de60609bb344af257022efc13dc7cc6f"
+    },
+    {
+      "file": "mmrotate/models/losses/__init__.py",
+      "sha256": "f1f0c2f30e3b1839632f278dd14a57db51e8606583a572fa026b6d4eb17a9288"
+    },
+    {
+      "file": "mmrotate/models/losses/convex_giou_loss.py",
+      "sha256": "e4b294127fdd816691690fda794fc25daadcee46a6b8d34a300c9bd537c91db8"
+    },
+    {
+      "file": "mmrotate/models/losses/gaussian_dist_loss.py",
+      "sha256": "5bd2ed5ca5f3a7d60df3461b52e0a4580807ab0016214c9dfb1fd2a78fa2822b"
+    },
+    {
+      "file": "mmrotate/models/losses/gaussian_dist_loss_v1.py",
+      "sha256": "e587f8f3d226e1b895c0df19c0a1e173e5e35ff4cfc0c282998dd7e09ffaa177"
+    },
+    {
+      "file": "mmrotate/models/losses/kf_iou_loss.py",
+      "sha256": "613587c09cdfd774383f5d7aeae1937b7e9885cf160537caf8388ce97277dd70"
+    },
+    {
+      "file": "mmrotate/models/losses/kld_reppoints_loss.py",
+      "sha256": "8872d5cd572163c730edef399f226d697efcad17a3ab49683911cb15835b274d"
+    },
+    {
+      "file": "mmrotate/models/losses/rotated_iou_loss.py",
+      "sha256": "552af51fb544cf2ec696764aec0848ace015e4706e9bba24459c502f8459a11b"
+    },
+    {
+      "file": "mmrotate/models/losses/smooth_focal_loss.py",
+      "sha256": "1fb55e52ea6b13c89579f700353fc032b3e9ccb489308b0f6e5c3118405f26e7"
+    },
+    {
+      "file": "mmrotate/models/losses/spatial_border_loss.py",
+      "sha256": "2907519ec6a66b95bfc639f0151c54baac43f8dd0d5920b7c7ee644bad3329e2"
+    },
+    {
+      "file": "mmrotate/models/necks/__init__.py",
+      "sha256": "cf2a59fde496a3f20a63707a0b57881b5607b3b03ca6ba81671989d19ffe63d6"
+    },
+    {
+      "file": "mmrotate/models/necks/o_fpn.py",
+      "sha256": "e5c9664c90040b4fd0a7331d27b0d6809084dc4b0e26e5cddaf569cfac783164"
+    },
+    {
+      "file": "mmrotate/models/necks/re_fpn.py",
+      "sha256": "f8b308b676bbc7fc7f7501c5cbaa431d3ec95a459c6c5ff57bff540b8cb7fcb8"
+    },
+    {
+      "file": "mmrotate/models/roi_heads/__init__.py",
+      "sha256": "b0ba6cdea2c206cbaa0d1e561051f3dbd4268c7607f94c85339cd09445317a82"
+    },
+    {
+      "file": "mmrotate/models/roi_heads/bbox_heads/__init__.py",
+      "sha256": "1cefa1ee9f2b8b4432337168136bab1af8f31b6f58e49d2af49838fc1a230860"
+    },
+    {
+      "file": "mmrotate/models/roi_heads/bbox_heads/convfc_rbbox_head.py",
+      "sha256": "cf9c218f527b938cb0ebcba0d30c68b3807e7132b9706449723051678fbe4fb8"
+    },
+    {
+      "file": "mmrotate/models/roi_heads/bbox_heads/gv_bbox_head.py",
+      "sha256": "35f533043f7cb0eba36c67b054461ea83e39dfa0e7e33fddbbca92e37a2a3b6a"
+    },
+    {
+      "file": "mmrotate/models/roi_heads/bbox_heads/plugins.py",
+      "sha256": "7996228641e5ee9bb95a175ec40a16664a22b9a7b6c149bbc79a203452cdb7e9"
+    },
+    {
+      "file": "mmrotate/models/roi_heads/bbox_heads/reg_block.py",
+      "sha256": "4f79169529486d097fd1ee26d053977a8638d4536dbaac21ded3fcbeaa81ed35"
+    },
+    {
+      "file": "mmrotate/models/roi_heads/bbox_heads/rotated_bbox_head.py",
+      "sha256": "0335f55fb22ff25926fb70e4e0132feb01ccbd4446766a0c55d71be4d7b9fb6c"
+    },
+    {
+      "file": "mmrotate/models/roi_heads/bbox_heads/strip_head.py",
+      "sha256": "4ddfa7b3a022433b5de1347e122450a0c2385cd8bee7edc7bc81e5d39fd1f718"
+    },
+    {
+      "file": "mmrotate/models/roi_heads/bbox_heads/utils_basic.py",
+      "sha256": "e6c9c0e30d8c507befb6b82723326f2f4946e4e5ef7cd1f292a3e4ac3e972672"
+    },
+    {
+      "file": "mmrotate/models/roi_heads/gv_ratio_roi_head.py",
+      "sha256": "29ed6e18d15e79b8a242f134b8d4e6781b7ee8dfa5f28a08220ca6093440af6d"
+    },
+    {
+      "file": "mmrotate/models/roi_heads/oriented_standard_roi_head.py",
+      "sha256": "7b8d32f99c151cbfb8f6373f7300c4233022de247d64b2914468a5b9b2f5a4af"
+    },
+    {
+      "file": "mmrotate/models/roi_heads/roi_extractors/__init__.py",
+      "sha256": "47aea6ed23f70c21016599b61895385504082bf7d4fb73ff0cf78dadb640bb05"
+    },
+    {
+      "file": "mmrotate/models/roi_heads/roi_extractors/rotate_single_level_roi_extractor.py",
+      "sha256": "998f14617fc8a45fab011e06f02b2ef580875fc9589089b2ff3f68c4887f78c8"
+    },
+    {
+      "file": "mmrotate/models/roi_heads/roi_trans_roi_head.py",
+      "sha256": "4bc6fd8a1b229a5978cd474423cea56ce31d38659d5b05aa0b59d1551b9ae6cf"
+    },
+    {
+      "file": "mmrotate/models/roi_heads/rotate_standard_roi_head.py",
+      "sha256": "0cd521cf398da8733e9616aeb25ab47907b64efac8e67e52376d588f8aab5994"
+    },
+    {
+      "file": "mmrotate/models/utils/__init__.py",
+      "sha256": "0bea869ebdc6348d694e2fa55148e6a6fd1867fe5c1296ecc9bceec7459561e4"
+    },
+    {
+      "file": "mmrotate/models/utils/cnn.py",
+      "sha256": "0fb6923d8be71822a3ead3701f11a2006403f4a97684de4bd09d3ca7e4c62675"
+    },
+    {
+      "file": "mmrotate/models/utils/enn.py",
+      "sha256": "810c0ec293a5c4e3f6d694de714d8e827693d673e07fd95429b237b0fd3e0edf"
+    },
+    {
+      "file": "mmrotate/models/utils/orconv.py",
+      "sha256": "bd65f303d23f215bd2c5d78ac9973aad74d7066b4b3f00c19cb22009c7dc1401"
+    },
+    {
+      "file": "mmrotate/models/utils/ripool.py",
+      "sha256": "63c186cc856dee433a1e5816b392fd8e68463c4b1ab0364aa942e2ad7d575d2c"
+    },
+    {
+      "file": "mmrotate/utils/__init__.py",
+      "sha256": "aa3714d6a6eae0680495dce484c330cde14ee0de2746228c60b78a6997c34d92"
+    },
+    {
+      "file": "mmrotate/utils/collect_env.py",
+      "sha256": "c319d908f393b1b5edb9a795d1885dc6621bfe81113f13c12847fe078e5a2652"
+    },
+    {
+      "file": "mmrotate/utils/compat_config.py",
+      "sha256": "06e4a4caf849e926f4450182a8cee4d2d46b94aa2ea1d02063ba677185b0784b"
+    },
+    {
+      "file": "mmrotate/utils/logger.py",
+      "sha256": "4666fa919071eb5ea98d6b9abedda874f20a90bc61bdb2db14613afa50eb9a3d"
+    },
+    {
+      "file": "mmrotate/utils/misc.py",
+      "sha256": "4baf1c4760ae1ca60d4797ed4a698077c941ddfee8d21afdc7448006bd765c3c"
+    },
+    {
+      "file": "mmrotate/utils/setup_env.py",
+      "sha256": "9a79f4ada8c25f72f527567fbdbddcda9c02064f515f341d397dab552ef8ede3"
+    },
+    {
+      "file": "mmrotate/version.py",
+      "sha256": "1e2071b15b8f83b64d86cbf87ed71ed7ed1360736b881ebbef2e263a4ee18ae6"
+    },
+    {
+      "file": "MMRotate_README.md",
+      "sha256": "0c6faa8fcc501f29ac164948f32a7a2d9204c1955d2474f429967ae702c8069b"
+    },
+    {
+      "file": "MMRotate_README_zh-CN.md",
+      "sha256": "f5b50bce51dd56235ee4a222081b87f9087703f0b14b50ee6d34c7b4c80668ea"
+    },
+    {
+      "file": "model-index.yml",
+      "sha256": "6a122c2345c6a687d5c007b724751f06cb46febd0d579ce3a411a80c15ecf752"
+    },
+    {
+      "file": "README.md",
+      "sha256": "ed8d1144b3d48d4315483074d4a987ccb56d61cc3cbf90bd444722252d3a75be"
+    },
+    {
+      "file": "requirements/build.txt",
+      "sha256": "2117040f42c6e5abcfd29eb8cb41b1170ccb3d4b696377349e645b572105f9cb"
+    },
+    {
+      "file": "requirements/docs.txt",
+      "sha256": "86efc4d825f0b0302fefa6fa62bf2c7fbb96bc850ea95b87c9fcde7ec1506a13"
+    },
+    {
+      "file": "requirements/mminstall.txt",
+      "sha256": "9faf8a50c4ee4365002980b95dfb333a550be9470032b54ff0cfb46da26ec7ad"
+    },
+    {
+      "file": "requirements/optional.txt",
+      "sha256": "a92cd4b48c52dfadbc649e1c3f4a2067a512f8993e30b765dfa097b15c19938e"
+    },
+    {
+      "file": "requirements/readthedocs.txt",
+      "sha256": "c479007fd810bd48598fd526cd1c196cb0c25d4812f00aaa8fc854698158a07a"
+    },
+    {
+      "file": "requirements/runtime.txt",
+      "sha256": "564e50c5ba1129dc6111ca117b0c8f3b96bfca287c2be26d2028de58329502ed"
+    },
+    {
+      "file": "requirements/tests.txt",
+      "sha256": "f80b8478135069a6782ddfce05dd074cb79a5ab4afb7b323854b070c8863276b"
+    },
+    {
+      "file": "requirements.txt",
+      "sha256": "3cc819a7e7b317393169b06a89a8ecf7d96145a47779656f970e28c0d6eea3ed"
+    },
+    {
+      "file": "setup.cfg",
+      "sha256": "7beb894d80b23c969ea90e160d30d568833cf152eb2b0081fe41224f4e744609"
+    },
+    {
+      "file": "setup.py",
+      "sha256": "f3c3720714ad660ef12f03e93252595aec9e175187d58a296a9507796622155f"
+    },
+    {
+      "file": "tools/analysis_tools/analyze_logs.py",
+      "sha256": "85faa370807aea178210aabf6754c039295d8ae2fcae1c0495a6382bc0c72a98"
+    },
+    {
+      "file": "tools/analysis_tools/benchmark.py",
+      "sha256": "8ccfd6b623d55a187697b59e185806cb35bf8d43e61ed7ef71e8a901b653695d"
+    },
+    {
+      "file": "tools/analysis_tools/confusion_matrix.py",
+      "sha256": "5e06c8a22982a2b5ca5dae952397d1f8ddc8e3b3faad5f49f0f33818dbe026b0"
+    },
+    {
+      "file": "tools/analysis_tools/get_flops.py",
+      "sha256": "fe88bcc3973182f5e80f553234ac5a575011a21e9fd8ee3d19c42fe011c730b9"
+    },
+    {
+      "file": "tools/data/dota/README.md",
+      "sha256": "70489a4ae0ada8fbf61264ae5ce059ff703f74666c9a535547ff7b13ab08dc35"
+    },
+    {
+      "file": "tools/data/dota/split/img_split.py",
+      "sha256": "402dda8c469c1fe86938190bde6aef3612dff87c07b7004dbbbd6b8044de79d7"
+    },
+    {
+      "file": "tools/data/dota/split/split_configs/ms_test.json",
+      "sha256": "64737bb16862faff145acea481bba09affae161371cd70e3d5ce11fa583e53b2"
+    },
+    {
+      "file": "tools/data/dota/split/split_configs/ms_train.json",
+      "sha256": "2b60b558bf678b8c8d07b0540ce53ca6c7da1ae12730a840fe209b592508f9f3"
+    },
+    {
+      "file": "tools/data/dota/split/split_configs/ms_trainval.json",
+      "sha256": "1a19ac8bad41db9e0c73381470238118d35d895eedc1df94585c2b4acca7166f"
+    },
+    {
+      "file": "tools/data/dota/split/split_configs/ms_val.json",
+      "sha256": "483ac4766a2a173534fca4cbf1ac1a1158d7ce8d559b26c5d8bc606173612f6e"
+    },
+    {
+      "file": "tools/data/dota/split/split_configs/ss_test.json",
+      "sha256": "16cabae71f53b77a0d17da68b8e2ef2dc3598d875996261cad8c8e9aa28d2230"
+    },
+    {
+      "file": "tools/data/dota/split/split_configs/ss_train.json",
+      "sha256": "2a133ca6d8f7f38fbf488701f6e476fc52ab38a9231a078e7f43087eae0a47f6"
+    },
+    {
+      "file": "tools/data/dota/split/split_configs/ss_trainval.json",
+      "sha256": "b44e348061a8e74134fa110eee96d57fc0c5aa886bd04a6c057afe2da35e5ad5"
+    },
+    {
+      "file": "tools/data/dota/split/split_configs/ss_val.json",
+      "sha256": "2bb56cfe241c45ceb06deb83f21e8da13fd25e7b5185765da3eba4a7078413bc"
+    },
+    {
+      "file": "tools/data/fair/dota_to_fair.py",
+      "sha256": "18146ccc874c97bdbeeb77e24c145ebc7b6f6f2c079d9a406b4830624c046070"
+    },
+    {
+      "file": "tools/data/fair/fair_to_dota.py",
+      "sha256": "185a45394ac94cfa7723644edce2fc3605cde5ca7e975e06c519c0c43e2e0175"
+    },
+    {
+      "file": "tools/data/fair/img_split.py",
+      "sha256": "7f2c7e189aef1fdedd7d5957d4fc2d28ac347655960f01932486e5b2f182f8f6"
+    },
+    {
+      "file": "tools/data/fair/split.sh",
+      "sha256": "86820d528649e0cce86ca333d31d5c1461f41fa15b9fa388c3e25bb614e8e7bb"
+    },
+    {
+      "file": "tools/data/fair/split_configs/ms_test.json",
+      "sha256": "6eb1116d106e12bef37eb53ad108a06ea5e01a7c23720dc878ed98a5007a4968"
+    },
+    {
+      "file": "tools/data/fair/split_configs/ms_train.json",
+      "sha256": "7972c5b94b95376824556db21f3f2fb1c8be738217ab8ad623b2aac7c794e685"
+    },
+    {
+      "file": "tools/data/fair/split_configs/ss_test.json",
+      "sha256": "fed250c6feb5c6d5a2366d62f8ecfe9545bd12e3c9ade509592c1fd256508c01"
+    },
+    {
+      "file": "tools/data/fair/split_configs/ss_train.json",
+      "sha256": "10807148841c1f8e3ce4ececc7156e72aed6e3c21dac78e8672f6b1c6987ba28"
+    },
+    {
+      "file": "tools/data/hrsc/README.md",
+      "sha256": "8a2c50f5a7dff7a5ce4d9d0cb0b47cc7601d44cb4122bc848a45e22e07bf5402"
+    },
+    {
+      "file": "tools/data/hrsid/README.md",
+      "sha256": "712f4bd165fe770841c209f068d2eab2ccf0a026af44ee4432c51daf736571ea"
+    },
+    {
+      "file": "tools/data/README.md",
+      "sha256": "d1eeef082da52ace7dfd103233526c7c40e2c5fb6d1f673041a27bf00058f730"
+    },
+    {
+      "file": "tools/data/ssdd/README.md",
+      "sha256": "ba8d354d718c9573da4879a96aaa6f0832b108de1cf4e8c2aab5c873c7cdb699"
+    },
+    {
+      "file": "tools/deployment/mmrotate2torchserve.py",
+      "sha256": "24a1270378ae90323cb747cfac73bd321de3aa630fd60d280734181a261e0c47"
+    },
+    {
+      "file": "tools/deployment/mmrotate_handler.py",
+      "sha256": "b0c2162247b015095d456b4671ba9e3088e317b2fe032c73889dcd362734c6aa"
+    },
+    {
+      "file": "tools/dist_test.sh",
+      "sha256": "bb00db6ed07c128c244ee9b0c8883b04d9cb4408e0b8b90580ad5b49b714a3e5"
+    },
+    {
+      "file": "tools/dist_train.sh",
+      "sha256": "799c72e62a7901e7fb6d148727d5ff91f261d7c41a0147188f03c1fc0f8ff697"
+    },
+    {
+      "file": "tools/misc/browse_dataset.py",
+      "sha256": "c217da80a1a1dcb437e1b9c7080fc1eb2139eec0bd82b65961ee90129f0ad043"
+    },
+    {
+      "file": "tools/misc/print_config.py",
+      "sha256": "adfb945e70b6e9e146d1b965b7220cac21440a2a927b40a4efb284e7126f4eb4"
+    },
+    {
+      "file": "tools/model_converters/publish_model.py",
+      "sha256": "cf789c8bbbf18cf9c71f4df2426675008c70ca20869463977cd7922cfb1b6e59"
+    },
+    {
+      "file": "tools/slurm_test.sh",
+      "sha256": "ab388a132b7fe2b448f5b57c6b8d3b5d0504895d3eb648958400d72670ed765c"
+    },
+    {
+      "file": "tools/slurm_train.sh",
+      "sha256": "4a390e535ebe111367046c1958d778c8834df68a2f1d3ca6902a65b7321e6c07"
+    },
+    {
+      "file": "tools/test.py",
+      "sha256": "e867a5be433951875a3a8c15ef68c5a2b4eeaace97464c0f7ae4de6acd322a72"
+    },
+    {
+      "file": "tools/train.py",
+      "sha256": "7bf50651ec52196f269896cd083735599b0ec67e4ef90631d1884e02f33fae32"
+    }
+  ]
+}

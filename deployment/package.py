@@ -73,7 +73,7 @@ SELFCHECK_FILES = [
 ]
 #: 检测源码（体积大，但配置与模型实现必需）
 SRC_PARTS = [
-    "vecrot/models/detector_strip_s/Strip-R-CNN",
+    "third_party/Strip-R-CNN",
 ]
 #: 明确排除
 #: 打包时排除的目录名。注意 "envs" 只在源码树的 deployment/ 下排除，

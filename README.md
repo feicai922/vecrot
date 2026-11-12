@@ -15,7 +15,7 @@ git clone https://github.com/feicai922/vecrot.git
 Set-Location .\vecrot
 ```
 
-GitHub 只提供代码，不包含 `models` 文件夹；模型权重、适配器和配套配置统一从网盘下载。
+GitHub 提供插件和定制检测源码（`third_party/Strip-R-CNN/`）；`models` 文件夹中的权重、适配器和基座文件统一从网盘下载。
 
 从 [百度网盘下载整个 models 文件夹](https://pan.baidu.com/s/1e6lr0Fk2Ud4lWQYXK58ecA?pwd=c83w)，提取码：`c83w`。将它放到仓库内的 `vecrot/` 目录，保持包内文件名和目录结构：
 
@@ -24,6 +24,7 @@ vecrot/                  # 仓库根目录
 ├─ install.py
 ├─ uninstall.py
 ├─ backend/
+├─ third_party/Strip-R-CNN/ # GitHub 自带检测源码
 ├─ vecrot_qgis/
 └─ vecrot/
    ├─ lib/
@@ -85,4 +86,4 @@ python -X utf8 uninstall.py
 
 ## 许可与致谢
 
-代码许可见 [LICENSE](LICENSE)，模型使用遵循各自上游许可。感谢 Strip-R-CNN、VectorLLM 和 RT-DETR。
+项目代码许可见 [LICENSE](LICENSE)，第三方源码遵循其目录内的 [LICENSE](third_party/Strip-R-CNN/LICENSE)，模型使用遵循各自上游许可。感谢 Strip-R-CNN、VectorLLM 和 RT-DETR。
