@@ -63,7 +63,9 @@ python -X utf8 install.py
 python -X utf8 uninstall.py
 ```
 
-插件会移入备份目录，模型、运行环境和已有成果保留。
+**此命令只卸载 QGIS 插件，不删除三个 conda 环境（`vecrot-geo`、`vecrot-det`、`vecrot-vllm`），也不删除模型、源码或已有成果。** 插件文件会移入备份目录。
+
+重新克隆 GitHub 仓库后，可复用这些环境，将模型包放到新仓库的 `vecrot/models/`，再运行 `python -X utf8 install.py`。安装在非默认 profile 时，卸载命令需附加 `--qgis-profile 对应名称`。
 
 ## 详细说明
 
