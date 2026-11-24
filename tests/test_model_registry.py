@@ -335,6 +335,40 @@ def test_add_model_folder_tool(tmp_path, monkeypatch):
     assert got.files["weights"] == os.path.join(target, "strip_fusion", "best.pth")
 
 
+def test_build_models_package_specs_are_valid(tmp_path):
+    """网盘包骨架里的 model.json 必须能被注册表读成合法条目（否则用户装完是空的）。"""
+    from deployment import build_models_package as bmp
+
+    out = os.path.join(str(tmp_path), "上传")
+    rc = bmp.main(["--out", out, "--patch-only"])
+    assert rc == 0
+    patch = os.path.join(out, "vecrot-models-patch")
+    keys = set()
+    for folder in os.listdir(patch):
+        spec_path = os.path.join(patch, folder, mr.SPEC_FILENAME)
+        if not os.path.isfile(spec_path):
+            continue
+        preset = mr.load_spec(os.path.join(patch, folder), REPO, patch)
+        keys.add(preset.key)
+        assert preset.spec_error == "", (preset.key, preset.spec_error)
+        # 只缺"权重还没拷进来"是正常的；声明本身不能缺字段
+        assert all("未配置" not in m for m in preset.missing()), preset.missing()
+    assert {"strip_s_gzda_scene", "strip_s_gzda", "rtdetr_roof",
+            "strip_s_fusion", "rio_gzda"} <= keys, keys
+
+
+def test_models_package_patch_matches_migration(tmp_path):
+    """网盘补丁里的声明必须与迁移脚本补出来的一致（两份不能各写一套）。"""
+    from deployment import build_models_package as bmp
+    from deployment.migrate_model_folders import LEGACY
+
+    out = os.path.join(str(tmp_path), "上传")
+    assert bmp.main(["--out", out, "--patch-only"]) == 0
+    for folder, spec in LEGACY.items():
+        path = os.path.join(out, "vecrot-models-patch", folder, mr.SPEC_FILENAME)
+        assert json.load(open(path, encoding="utf-8")) == spec, folder
+
+
 # ------------------------------------------------------------------ 两份镜像
 
 
