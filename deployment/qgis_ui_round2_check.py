@@ -230,8 +230,11 @@ def main() -> int:
     # RT-DETR 预设：应可用且显示正确的后端
     idx = next((i for i in range(combo.count())
                 if combo.itemData(i) == "rtdetr_roof"), -1)
-    check(idx >= 0, "存在 RT-DETR 预设")
-    if idx >= 0:
+    # 模型列表现在是「扫文件夹」来的：没放 RT-DETR 文件夹时它就不在列表里，
+    # 那是可选的第二个模型，不该让整组检查变红。
+    if idx < 0:
+        print("  [SKIP] 未安装 RT-DETR 模型文件夹（可选），跳过该组检查")
+    else:
         combo.setCurrentIndex(idx)
         detail = dock.modelDetailView.text()
         check("rtdetr_hf" in detail, "详情显示后端 rtdetr_hf")

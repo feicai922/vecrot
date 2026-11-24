@@ -97,12 +97,15 @@ def build_manifest(skip_envs: bool) -> dict:
         "detector": ("vecrot-det", "vecrot_det"),
         "vector": ("vecrot-vllm", "vecrot_vllm", "vecrot-vector"),
         "detector_hf": ("vecrot-vllm", "vecrot_vllm"),
+        # RiO-DETR：torch 2.2 + timm + cv2/numba/pycocotools，必须单独一套
+        "detector_rio": ("vecrot-rio", "vecrot_rio", "riodetr"),
     }
     ENV_VARS = {
         "coordinator": "VECROT_PY_COORDINATOR",
         "detector": "VECROT_PY_DETECTOR",
         "vector": "VECROT_PY_VECTOR",
         "detector_hf": "VECROT_PY_VECTOR",
+        "detector_rio": "VECROT_PY_RIO",
     }
 
     def _candidate_pythons(role: str) -> list[str]:
@@ -135,7 +138,8 @@ def build_manifest(skip_envs: bool) -> dict:
 
     mapping = {role: next((p for p in _candidate_pythons(role)
                            if p and os.path.isfile(p)), "")
-               for role in ("coordinator", "detector", "vector", "detector_hf")}
+               for role in ("coordinator", "detector", "vector", "detector_hf",
+                            "detector_rio")}
     for role, cfg in (m.get("environments") or {}).items():
         cfg.pop("_note", None)
         p = mapping.get(role, "")
@@ -283,6 +287,9 @@ def selfcheck() -> int:
         p = cfg.get("python")
         if p and os.path.isfile(p):
             log(f"       ✓ {role:12} {p}")
+            continue
+        if role == "detector_rio":
+            log(f"       - {role:12} 未配置（只影响 RiO-DETR 模型）")
             continue
         if role == "detector_hf":
             # 与 vector 共用环境；vector 没解包时这里也必然缺

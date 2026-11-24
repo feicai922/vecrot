@@ -1,182 +1,89 @@
-"""固定模型搭配（preset registry）：一组权重 + 配置 + 后端的完整组合。
+"""固定模型搭配（preset registry）—— **兼容层**。
 
-## 为什么用"固定搭配"而不是自由填路径
+历史沿革：本文件曾经把每个模型的权重/配置/类别数写成 Python 常量，理由是
+"权重、配置、预处理、类别数必须成套"。这个理由仍然成立，但载体换了：
 
-开发文档 §2.1 与 §7.3 反复强调的约束是：**权重、配置、预处理、类别数必须成套**。
-真实事故里最常见的失败不是"路径写错"，而是：
+* 现在权威来源是**模型文件夹**：``vecrot/models/<任意名>/model.json``
+  声明自己的 backend / 权重 / 配置 / 类别数 / 阈值，见 ``model_registry``；
+* 加一个模型不再改代码，拷贝文件夹即可，面板自动多一项。
 
-* 换了 `.pth` 没换 `.py` → 结构不匹配（`missing/unexpected` 一堆）
-* 换了模型没换 `num_classes` → 分类头尺寸不符
-* 换了基座没换适配器 → 词表错位，模型静默输出换行（本仓库实际踩过）
+本文件只保留旧的对外函数名（``available_presets`` / ``get_preset`` /
+``describe`` / ``refresh_repo_root`` / ``PRESETS``），避免 UI、测试与部署脚本
+全线改名。真正的逻辑全在 ``model_registry.py``。
 
-所以这里把每个可用模型写成**一个预设**：权重、配置、类别数、后端、预处理口径
-全部在代码里写死。用户在面板上只选一个名字，不存在拼错的余地。
+## 为什么它不是唯一实现
 
-## 怎么加一个新模型（例如 RT-DETR）
-
-在本文件底部 `PRESETS` 里加一条：
-
-    ModelPreset(
-        key="rtdetr_r50_coco",
-        label="RT-DETR R50（COCO 水平框）",
-        backend="mmdet_hbb",                  # 或 mmrotate_obb / strip_s_gzda
-        weights=..., config=...,
-        num_classes=80,
-        note="...",
-    )
-
-需要的话在 `backend/detector/` 补对应的适配器。插件侧不需要改——下拉框从
-``available_presets()`` 动态生成。预设里任何一项路径不存在，面板会把它显示为
-不可用并给出缺哪个文件，而不是等到作业失败。
+插件装在 QGIS profile 的 ``python/plugins`` 下，那里没有 ``backend`` 包。
+所以插件自带一份**逐字节相同**的 ``model_registry.py``，并用
+``tests/test_registry_parity.py`` 守住两份不漂移。
 """
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass, field
 
-#: 仓库根（本文件在 backend/contracts/ 下）
-_REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-
-def _r(rel: str) -> str:
-    """相对仓库根的路径转绝对路径。"""
-    return os.path.normpath(os.path.join(_REPO, rel))
-
-
-@dataclass(frozen=True)
-class ModelPreset:
-    """一个可直接运行的模型组合。"""
-
-    key: str
-    label: str
-    backend: str                       # strip_s_gzda / mmrotate_obb / mmdet_hbb / jsonl
-    #: 必需文件（存在性检查用），按用途命名
-    files: dict = field(default_factory=dict)
-    num_classes: int | None = None
-    #: 会在 report 里显示的说明（来源、口径、已知限制）
-    note: str = ""
-    #: 后端专用参数（如 score_thr / nms_iou），留空用 manifest 默认
-    detector_options: dict = field(default_factory=dict)
-
-    def missing(self) -> list[str]:
-        """返回缺失的必需文件（空列表表示可用）。
-
-        注意 ``files`` 为空表示"这个预设还没配权重"，同样算不可用 ——
-        否则占位条目会被当成能跑的模型（实测：RT-DETR 占位曾被判为 available）。
-        """
-        if not self.files:
-            return ["（该预设尚未配置权重路径）"]
-        out = []
-        for label, path in self.files.items():
-            if not path or not os.path.exists(path):
-                out.append(f"{label}: {path or '（未配置）'}")
-        return out
-
-    def is_available(self) -> bool:
-        return not self.missing()
-
-    def to_job_fields(self) -> dict:
-        """展开成 job.json 的 inference 字段。"""
-        f = self.files
-        out: dict = {"detector_profile": self.backend}
-        if f.get("weights"):
-            out["detector_weights"] = f["weights"]
-        if f.get("config"):
-            out["detector_config"] = f["config"]
-        if self.num_classes:
-            out["detector_num_classes"] = int(self.num_classes)
-        if f.get("vector_ckpt"):
-            out["vector_ckpt"] = f["vector_ckpt"]
-        if f.get("vector_base"):
-            out["vector_base"] = f["vector_base"]
-        return out
-
-
-# ------------------------------------------------------------------ 预设
-
-#: 本仓库自带的贵州建筑模型（旋转框 + ScaleCond 轮廓）
-STRIP_GZDA = ModelPreset(
-    key="strip_s_gzda_sc055m",
-    label="建筑专用 · Strip-R-CNN-S + ScaleCond 0.55M（旋转框，推荐）",
-    backend="strip_s_gzda",
-    files={
-        "weights": _r("vecrot/models/detector_strip_s/best_mAP_iter_90288.pth"),
-        "config": _r("third_party/Strip-R-CNN/configs/gzda/"
-                     "strip_s_gzda.py"),
-        "vector_ckpt": _r("vecrot/models/adaptor_sc_055m"),
-        # 训练时的 official_vocab 缺失，用按 prune 映射重建的 635 词表基座
-        "vector_base": _r("vecrot/models/official_vocab_635"),
-    },
-    num_classes=1,
-    note="本仓库默认组合。检测权重 missing=0/unexpected=0；真实瓦片 R=0.67/P=0.74。"
-         "轮廓基座由 base_v1 按 prune 映射重建（见 docs/STATUS.md）。",
-    detector_options={"score_thr": 0.05, "nms_iou": 0.3, "max_per_img": 2000},
+from . import model_registry as _mr
+from .model_registry import (          # noqa: F401 - 供调用方直接 import
+    BACKEND_LABELS,
+    SPEC_FILENAME,
+    ModelPreset,
+    ModelSpecError,
+    default_models_root,
+    find_repo_root,
+    load_spec,
+    resolve_path,
+    scan,
+    validate_folder,
 )
 
-#: 只跑轮廓：不做检测，读用户提供的 jsonl 检测结果
-VECTOR_ONLY = ModelPreset(
-    key="vector_only",
-    label="只跑轮廓（读已有检测结果 jsonl）",
-    backend="jsonl",
-    files={
-        "vector_ckpt": _r("vecrot/models/adaptor_sc_055m"),
-        "vector_base": _r("vecrot/models/official_vocab_635"),
-    },
-    note="需要 manifest 的 models.detections_jsonl 指向窗口级检测结果。",
-)
+#: 仓库根（本文件在 backend/contracts/ 下，向上三级）
+_REPO = _mr.find_repo_root(os.path.dirname(os.path.abspath(__file__)))
 
-#: RT-DETR（HuggingFace Transformers 版，水平框）。
-#: 目录形式：model.safetensors + config.json + preprocessor_config.json。
-#: 单类别（LABEL_0 = 屋顶），固定 640×640 输入，只出框无掩膜。
-RTDETR_ROOF = ModelPreset(
-    key="rtdetr_roof",
-    label="卫星屋顶 · RT-DETR R101vd（水平框，单类别）",
-    backend="rtdetr_hf",
-    files={
-        # RT-DETR 是"目录即模型"：把整个目录当作 weights
-        "weights": _r("vecrot/models/detector_rt-detr_bbox"),
-        # 轮廓仍由 VectorLLM 生成，所以需要适配器 + 基座
-        "vector_ckpt": _r("vecrot/models/adaptor_sc_055m"),
-        "vector_base": _r("vecrot/models/official_vocab_635"),
-    },
-    num_classes=1,
-    note="HF Transformers 版 RT-DETR（RTDetrForObjectDetection），"
-         "1 类「屋顶」，固定 640×640 输入。作者报告 AP50-95=0.434，"
-         "但 AP_small 仅 0.248：高分辨率影像上小目标漏检偏多。"
-         "需要用 deployment/envs/vector 作为检测环境（含 transformers+RTDetr API）。",
-)
+#: 模型文件夹根目录
+_MODELS_ROOT = _mr.default_models_root(_REPO)
 
 
-#: 带场景分类分支的检测模型：先判「本窗口有没有建筑」，无建筑直接跳过，
-#: 不跑 RPN/RoI 与轮廓生成。实测纯背景窗口从 1725ms 降到 492ms（约 3.5x）。
-#: 权重里 scene_head 有 6 个张量（fc1 1280->512、norm、fc2 512->2），
-#: 结构按权重形状重建于 configs/gzda/scene_branch.py。
-STRIP_GZDA_SCENE = ModelPreset(
-    key="strip_s_gzda_scene",
-    label="建筑专用 · Strip-R-CNN-S + 场景分类（大范围推理推荐）",
-    backend="strip_s_gzda",
-    files={
-        "weights": _r("vecrot/models/detector_strip_s_scene/"
-                      "best_mAP_iter_37620.pth"),
-        "config": _r("third_party/Strip-R-CNN/configs/gzda/strip_s_gzda_scene.py"),
-        "vector_ckpt": _r("vecrot/models/adaptor_sc_055m"),
-        "vector_base": _r("vecrot/models/official_vocab_635"),
-    },
-    num_classes=1,
-    note="带 scene_head。先判断窗口是否含建筑，无建筑直接跳过检测与轮廓。"
-         "实测场景概率：有建筑 0.9988 / 纯背景 0.1675；纯背景窗口耗时降到 1/3.5。",
-    detector_options={"score_thr": 0.05, "nms_iou": 0.3, "max_per_img": 2000,
-                      "scene_threshold": 0.5},
-)
+def _rebuild(repo_root: str | None = None, models_root: str | None = None) -> None:
+    """重新扫描并替换模块级常量（PRESETS / _BY_KEY / _SKIPPED）。"""
+    global _REPO, _MODELS_ROOT, PRESETS, _BY_KEY, _SKIPPED
+    if repo_root:
+        _REPO = os.path.normpath(repo_root)
+    if models_root:
+        _MODELS_ROOT = os.path.normpath(models_root)
+    else:
+        _MODELS_ROOT = _mr.default_models_root(_REPO)
+    found, dropped = _mr.scan(_MODELS_ROOT, _REPO)
+    PRESETS = tuple(found) + tuple(_mr.builtin_presets(_MODELS_ROOT, _REPO))
+    _BY_KEY = {p.key: p for p in PRESETS}
+    _SKIPPED = dropped
 
 
-PRESETS: tuple[ModelPreset, ...] = (
-    STRIP_GZDA_SCENE,
-    RTDETR_ROOF,
-    VECTOR_ONLY,
-)
+def refresh_repo_root(root: str | None = None) -> str:
+    """重新解析仓库根并重扫模型文件夹，返回解析到的仓库根。
 
-_BY_KEY = {p.key: p for p in PRESETS}
+    插件侧需要在定位到 manifest 之后再调一次（模块级常量在 import 时求值，
+    那时可能还不知道仓库在哪）。
+    """
+    _rebuild(repo_root=root)
+    return _REPO
+
+
+def refresh_models_root(models_root: str) -> str:
+    """显式指定模型根目录（自检脚本 / 用户自定义部署用）。"""
+    _rebuild(models_root=models_root)
+    return _MODELS_ROOT
+
+
+def models_root() -> str:
+    return _MODELS_ROOT
+
+
+def repo_root() -> str:
+    return _REPO
+
+
+def skipped() -> list[dict]:
+    """没被列进来的文件夹及原因（面板上要显示，否则用户以为装坏了）。"""
+    return list(_SKIPPED)
 
 
 def available_presets(only_available: bool = True) -> list[ModelPreset]:
@@ -191,23 +98,16 @@ def get_preset(key: str) -> ModelPreset | None:
 
 
 def describe() -> list[dict]:
-    """给面板/自检用的可读清单。"""
-    out = []
-    for p in PRESETS:
-        miss = p.missing()
-        out.append({
-            "key": p.key,
-            "label": p.label,
-            "backend": p.backend,
-            "available": not miss,
-            "missing": miss,
-            "num_classes": p.num_classes,
-            "note": p.note,
-        })
-    return out
+    """给面板/自检用的可读清单（含缺件说明）。"""
+    return [p.describe() for p in PRESETS]
+
+
+# 首次 import 时扫一遍
+_rebuild()
 
 
 if __name__ == "__main__":
     import json
 
-    print(json.dumps(describe(), ensure_ascii=False, indent=2))
+    print(json.dumps({"models_root": _MODELS_ROOT, "presets": describe(),
+                      "skipped": skipped()}, ensure_ascii=False, indent=2))

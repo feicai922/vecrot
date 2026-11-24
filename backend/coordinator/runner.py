@@ -827,11 +827,18 @@ class Coordinator:
         """
         if role == "detector":
             profile = (request.get("profile") or "").strip()
-            if profile in ("rtdetr_hf",):
-                override = (self.manifest.get("environments") or {}).get(
-                    "detector_hf") or {}
+            # profile → 需要专用解释器的环境角色
+            need = {"rtdetr_hf": "detector_hf",
+                    "rio_detr": "detector_rio"}.get(profile)
+            if need:
+                override = (self.manifest.get("environments") or {}).get(need) or {}
                 if override.get("python"):
-                    return "detector_hf"
+                    return need
+                # 没配这个环境时退回默认 detector 环境：那里 torch/依赖版本完全不同，
+                # 后端会自己报 DETECTOR_ENV_INCOMPLETE。这里先留一条日志，
+                # 让「作业失败」能追到这个根因。
+                worker_log(f"profile={profile} 需要 environments.{need}.python，"
+                           "但 manifest 未配置；将退回到默认 detector 环境")
             elif profile in ("strip_s_gzda", "strip_rcnn", "mmrotate_obb",
                              "mmdet_hbb", "jsonl", "null", ""):
                 pass        # 用默认 detector 环境（mmcv 系 / 无需模型）
@@ -962,35 +969,60 @@ class Coordinator:
     # ---------------------------------------------------------- 参数
 
     def _detector_options(self) -> dict:
-        """检测配置。profile 解析顺序：job.json 显式指定 > manifest 默认。"""
+        """检测配置。
+
+        profile 解析顺序：job.json 显式指定 > manifest 默认。
+        阈值类参数的优先级：job.json 的 ``detector_options``（来自模型文件夹的
+        model.json）> manifest 的 ``models.detector`` > 后端内置默认。
+        model.json 更具体，所以它压过 manifest —— manifest 只是"没选模型时"的兜底。
+        """
         p = self.spec
         models = self.manifest.get("models") or {}
         det = (models.get("detector") or {})
         profile = p.inference.detector_profile or det.get("profile") or "strip_s_gzda"
+
+        #: 模型文件夹声明的后端参数（已由 jobspec 校验为平铺标量）
+        over = dict(p.inference.detector_options or {})
+        # job.json 顶层的 scene_threshold 是"显式指定"，优先级高于模型文件夹里的默认值
+        if p.inference.scene_threshold is not None:
+            over["scene_threshold"] = p.inference.scene_threshold
+
+        def pick(key: str, backend_default, cast=None):
+            """job.json 的 detector_options > manifest > 后端默认。"""
+            if key in over:
+                value = over[key]
+            elif key in det:
+                value = det[key]
+            else:
+                return backend_default
+            return cast(value) if cast else value
+
         base = {
             "detections_jsonl": self._resolve(models.get("detections_jsonl")),
             "device": f"cuda:{p.inference.gpu_index}",
-            "score_thr": det.get("score_thr", 0.05),
-            "nms_iou": det.get("nms_iou", 0.3),
-            "max_per_img": det.get("max_per_img", 2000),
         }
+
         if profile in ("strip_s_gzda", "strip_rcnn", "mmrotate_obb"):
-            # job.json 里显式给的路径优先于 manifest（用户自选模型）
             base.update({
-                "strip_rcnn_repo": self._resolve(det.get("repo")),
+                "score_thr": pick("score_thr", 0.05, float),
+                "nms_iou": pick("nms_iou", 0.3, float),
+                "max_per_img": pick("max_per_img", 2000, int),
+                # job.json 里显式给的路径优先于 manifest（模型文件夹选中的组合）
+                "strip_rcnn_repo": (p.inference.detector_repo
+                                    or self._resolve(det.get("repo"))),
                 "detector_weights": p.inference.detector_weights
                 or self._resolve(det.get("weights")),
                 "detector_config": p.inference.detector_config
                 or self._resolve(det.get("config")),
-                # 场景分类阈值：job.json > manifest > 0.5（只有带 scene_head 的模型生效）
-                "scene_threshold": (
-                    p.inference.scene_threshold
-                    if p.inference.scene_threshold is not None
-                    else det.get("scene_threshold", 0.5)),
+                # 场景分类阈值：只有带 scene_head 的模型生效
+                "scene_threshold": pick("scene_threshold", 0.5, float),
                 "derived_dir": os.path.join(self.work_dir, "derived"),
             })
         elif profile == "mmdet_hbb":
             base.update({
+                "score_thr": pick("score_thr", 0.05, float),
+                "nms_iou": pick("nms_iou", 0.5, float),
+                "max_per_img": pick("max_per_img", 2000, int),
                 "mmdet_repo": self._resolve(det.get("mmdet_repo")),
                 "detector_weights": p.inference.detector_weights,
                 "detector_config": p.inference.detector_config,
@@ -1002,9 +1034,28 @@ class Coordinator:
             # （含 model.safetensors + config.json + preprocessor_config.json）。
             # 不需要 .py 配置与 num_classes（从 config.json 的 id2label 读）。
             base.update({
+                "score_thr": pick("score_thr", 0.3, float),
                 "detector_weights": p.inference.detector_weights
                 or self._resolve(det.get("rtdetr_dir")),
             })
+        elif profile == "rio_detr":
+            # RiO-DETR / RiO-DETRv2：YAML 配置 + checkpoint，
+            # 用源码树里的 engine.core.YAMLConfig 构建（不是 mmcv 也不是 HF）。
+            base.update({
+                # 注意：不做 NMS，也没有 max_per_img —— 输出条数由配置里的
+                # RTDETRTransformerv2OBB.num_queries / num_top_queries 决定（通常 300）
+                "score_thr": pick("score_thr", 0.4, float),
+                "detector_repo": (p.inference.detector_repo
+                                  or self._resolve(det.get("rio_repo"))),
+                "detector_config": p.inference.detector_config,
+                "detector_weights": p.inference.detector_weights,
+                "num_classes": p.inference.detector_num_classes,
+                "derived_dir": os.path.join(self.work_dir, "derived"),
+            })
+        # 没用到的键留给后端自己解释；这里不校验未知键，
+        # 免得加一个后端参数就要改本文件（jobspec 已保证是平铺标量）
+        for key, value in over.items():
+            base.setdefault(key, value)
         return {"profile": profile, "options": base}
 
     def _vector_options(self) -> dict:

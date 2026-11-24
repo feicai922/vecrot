@@ -25,10 +25,12 @@ vecrot/                  # 仓库根目录
 ├─ uninstall.py
 ├─ backend/
 ├─ third_party/Strip-R-CNN/ # GitHub 自带检测源码
+├─ third_party/RiO-DETRv2/  # 可选：跑 RiO-DETR 才需要
 ├─ vecrot_qgis/
 └─ vecrot/
    ├─ lib/
    └─ models/            # 网盘下载的整个文件夹
+      └─ <模型文件夹>/    # 一个文件夹 = 面板上的一个可选模型
 ```
 
 使用与代码同版本的 models 包，无需逐个下载模型。不要放成 `vecrot/models/models/`。
@@ -41,7 +43,8 @@ vecrot/                  # 仓库根目录
 |---|---|---|
 | `vecrot-geo` | 3.11 | 影像读取、坐标转换、矢量导出 |
 | `vecrot-det` | 3.9 | Strip-R-CNN 旋转框检测 |
-| `vecrot-vllm` | 3.11 | VectorLLM 轮廓生成 |
+| `vecrot-vllm` | 3.11 | VectorLLM 轮廓生成（RT-DETR 也复用这套） |
+| `vecrot-rio` | 3.10 | 可选：RiO-DETR / RiO-DETRv2 旋转框检测 |
 
 按 [环境安装教程](docs/安装教程-自建环境.md) 建立环境并安装对应版本的依赖。安装脚本不负责下载模型或创建环境。
 
@@ -58,10 +61,16 @@ python -X utf8 install.py
 ## 使用
 
 1. 在 QGIS 中加载本地、带地理参考的影像。
-2. 在插件中选择影像和模型预设，框选处理区域。
+2. 在插件中选择影像和模型搭配，框选处理区域。
 3. 点击开始，完成后自动加载 `boxes.gpkg`（检测框）和 `buildings.gpkg`（建筑轮廓）。
 
-默认推荐 Strip-R-CNN 场景版；也支持 RT-DETR 水平框检测和读取已有检测结果生成轮廓。
+「模型搭配」下拉框的每一项对应 `vecrot/models/` 下的一个文件夹（文件夹里的 `model.json`
+声明后端、权重、配置、类别数与阈值）。**加模型只需拷贝文件夹，不用改代码**，
+例如融合数据集上重训的 Strip-R-CNN-S、或自己训的 RiO-DETRv2。
+详见 [模型文件夹约定](docs/模型下载.md#模型文件夹约定重要)。
+
+默认推荐 Strip-R-CNN 场景版；也支持 RT-DETR 水平框、RiO-DETR 旋转框，
+以及读取已有检测结果只跑轮廓。
 
 ## 卸载
 
@@ -77,7 +86,7 @@ python -X utf8 uninstall.py
 
 ## 详细说明
 
-- [模型包放置与校验](docs/模型下载.md)
+- [模型包放置、模型文件夹约定与校验](docs/模型下载.md)
 - [环境安装与排错](docs/安装教程-自建环境.md)
 - [自检、开发调试及指定 QGIS profile](docs/插件安装卸载与本机调试.md)
 - [技术状态与已验证范围](docs/STATUS.md)
@@ -86,4 +95,4 @@ python -X utf8 uninstall.py
 
 ## 许可与致谢
 
-项目代码许可见 [LICENSE](LICENSE)，第三方源码遵循其目录内的 [LICENSE](third_party/Strip-R-CNN/LICENSE)，模型使用遵循各自上游许可。感谢 Strip-R-CNN、VectorLLM 和 RT-DETR。
+项目代码许可见 [LICENSE](LICENSE)，第三方源码遵循其目录内的 [LICENSE](third_party/Strip-R-CNN/LICENSE)，模型使用遵循各自上游许可。感谢 Strip-R-CNN、VectorLLM、RT-DETR 与 RiO-DETR。

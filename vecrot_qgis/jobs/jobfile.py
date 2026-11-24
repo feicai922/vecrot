@@ -7,6 +7,10 @@ import time
 
 SCHEMA_VERSION = "1.0"
 
+#: 必须写绝对路径的模型字段（相对路径一律拒绝：manifest 的相对基准与 job.json 不同）
+_MODEL_PATH_FIELDS = ("detector_weights", "detector_config", "detector_repo",
+                      "vector_ckpt", "vector_base")
+
 
 class JobSpecProblem(ValueError):
     def __init__(self, code: str, message: str):
@@ -93,15 +97,35 @@ def build_job_payload(raster_path: str, aoi_geojson: dict | None, aoi_crs: str |
     if vector_profile:
         payload["inference"]["vector_profile"] = vector_profile
 
-    # 用户自选的模型路径：只写非空项，让后端回退到 manifest 默认值
+    # 用户自选的模型路径 / 参数：只写非空项，让后端回退到 manifest 默认值
     for key, val in (model_overrides or {}).items():
         if val in (None, ""):
             continue
-        if key in ("detector_weights", "detector_config", "vector_ckpt", "vector_base"):
-            if not os.path.isabs(val):
+        if key in _MODEL_PATH_FIELDS:
+            if not isinstance(val, str) or not os.path.isabs(val):
                 raise JobSpecProblem("MODEL_PATH_INVALID",
                                      f"{key} 必须是绝对路径：{val}")
-        payload["inference"][key] = val
+            payload["inference"][key] = val
+        elif key == "detector_options":
+            # 模型文件夹带来的后端参数（score_thr / nms_iou / scene_threshold …）
+            if not isinstance(val, dict):
+                raise JobSpecProblem("MODEL_OPTIONS_INVALID",
+                                     "detector_options 必须是对象")
+            opts = {}
+            for ok, ov in val.items():
+                if isinstance(ov, bool) or isinstance(ov, (int, float, str)):
+                    opts[str(ok)] = ov
+                else:
+                    raise JobSpecProblem(
+                        "MODEL_OPTIONS_INVALID",
+                        f"detector_options.{ok} 只接受数字/布尔/字符串")
+            if opts:
+                payload["inference"]["detector_options"] = opts
+        elif isinstance(val, (dict, list, tuple)):
+            raise JobSpecProblem("MODEL_OVERRIDE_INVALID",
+                                 f"model_overrides.{key} 不能是嵌套结构")
+        else:
+            payload["inference"][key] = val
     return payload
 
 

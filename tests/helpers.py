@@ -140,3 +140,23 @@ def plugin_dir() -> str:
 def plugin_parent() -> str:
     """``plugin_dir()`` 的父目录 —— 加进 sys.path 就能 ``import vecrot_qgis``。"""
     return os.path.dirname(plugin_dir())
+
+
+def make_model_folder(root: str, name: str, spec: dict,
+                      placeholders: dict | None = None,
+                      spec_name: str = "model.json") -> str:
+    """在 ``root`` 下造一个模型文件夹（``model.json`` + 占位文件）。
+
+    ``placeholders`` 是 ``{相对路径: 字节数}``，用来满足"必需文件存在"检查；
+    不写真实权重，测试只验证注册表/路径解析，不加载模型。
+    """
+    folder = os.path.join(root, name)
+    os.makedirs(folder, exist_ok=True)
+    with open(os.path.join(folder, spec_name), "w", encoding="utf-8") as f:
+        json.dump(spec, f, ensure_ascii=False, indent=2)
+    for rel, size in (placeholders or {}).items():
+        path = os.path.join(folder, *rel.split("/"))
+        os.makedirs(os.path.dirname(path) or folder, exist_ok=True)
+        with open(path, "wb") as f:
+            f.write(b"\0" * int(size))
+    return folder

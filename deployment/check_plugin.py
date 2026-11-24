@@ -20,7 +20,13 @@ import xml.etree.ElementTree as ET
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(HERE)
-PLUGIN_DIR = os.path.join(REPO, "qgis_plugin", "vecrot_qgis")
+# 插件目录名改过一次（qgis_plugin/vecrot_qgis → vecrot_qgis），这里两者都认，
+# 免得脚本自己先 FileNotFoundError（比"检查失败"更让人困惑）。
+PLUGIN_DIR = next(
+    (d for d in (os.path.join(REPO, "vecrot_qgis"),
+                 os.path.join(REPO, "qgis_plugin", "vecrot_qgis"))
+     if os.path.isdir(d)),
+    os.path.join(REPO, "vecrot_qgis"))
 
 #: §15 第 2 条：绝不向 QGIS Python 安装/导入的推理与 GIS 依赖
 FORBIDDEN_IMPORTS = {

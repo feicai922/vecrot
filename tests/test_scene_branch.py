@@ -13,7 +13,7 @@ import pytest
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, REPO)
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from helpers import plugin_parent   # noqa: E402
+from helpers import make_model_folder, plugin_parent   # noqa: E402
 
 sys.path.insert(0, plugin_parent())
 
@@ -80,46 +80,60 @@ def test_scene_hooks_defines_hook():
     assert "SceneConsoleHook" in src
 
 
-def test_scene_preset_registered_both_sides():
-    from backend.contracts import presets as bp
-    from vecrot_qgis.jobs import presets as pp
+def _scene_models_root(tmp_path):
+    """按迁移脚本的口径造一个"场景分类模型文件夹"，返回 models 根。
 
-    keys_b = {p.key for p in bp.PRESETS}
-    keys_p = {p.key for p in pp.PRESETS}
-    assert "strip_s_gzda_scene" in keys_b, "backend 侧缺少场景预设"
-    assert "strip_s_gzda_scene" in keys_p, "插件侧缺少场景预设"
-    assert keys_b == keys_p
-
-
-def test_scene_preset_is_first():
-    """场景模型应排在第一位（大范围推理推荐）。
-
-    只查顺序与参数，不查文件是否下载 —— 后者由下面的 availability 用例覆盖。
+    直接复用 ``deployment/migrate_model_folders.py`` 里的声明，避免测试里
+    再写一份"理想的" model.json 而与实际迁移结果脱节。
     """
-    from backend.contracts import presets as bp
+    from deployment.migrate_model_folders import LEGACY
 
-    first = bp.PRESETS[0]
-    assert first.key == "strip_s_gzda_scene", f"第一个预设是 {first.key}"
-    assert first.detector_options.get("scene_threshold") == 0.5
-
-
-@needs_weights
-@needs_source
-def test_scene_preset_is_available():
-    """下载齐全时，默认预设必须真的可用，否则面板一打开就跑不了。"""
-    from backend.contracts import presets as bp
-
-    first = bp.PRESETS[0]
-    assert first.is_available(), "默认选中的场景预设必须可用：" + str(first.missing())
+    root = str(tmp_path)
+    make_model_folder(root, "detector_strip_s_scene",
+                      dict(LEGACY["detector_strip_s_scene"]),
+                      {"best_mAP_iter_37620.pth": 2048})
+    return root
 
 
-def test_scene_preset_uses_scene_weights():
-    from backend.contracts import presets as bp
+def test_scene_preset_is_discovered_from_folder(tmp_path):
+    """场景模型现在由文件夹声明：注册表扫出来必须是 strip_s_gzda + scene_threshold。"""
+    from backend.contracts import model_registry as mr
 
-    p = bp.get_preset("strip_s_gzda_scene")
-    assert p is not None
-    assert "detector_strip_s_scene" in p.files["weights"]
-    assert "strip_s_gzda_scene.py" in p.files["config"]
+    root = _scene_models_root(tmp_path)
+    presets, skipped = mr.scan(root, REPO)
+    keys = {p.key for p in presets}
+    assert "strip_s_gzda_scene" in keys, (keys, skipped)
+    scene = next(p for p in presets if p.key == "strip_s_gzda_scene")
+    assert scene.backend == "strip_s_gzda"
+    assert scene.detector_options.get("scene_threshold") == 0.5
+    assert scene.is_available()
+
+
+def test_scene_preset_ordering(tmp_path):
+    """场景模型用 order=10 排在最前（大范围推理推荐）。"""
+    from backend.contracts import model_registry as mr
+    from helpers import make_model_folder as mk
+
+    root = _scene_models_root(tmp_path)
+    mk(root, "detector_strip_s", {
+        "spec_version": 1, "key": "strip_s_gzda", "label": "无场景版",
+        "backend": "strip_s_gzda", "num_classes": 1,
+        "weights": "best_mAP_iter_90288.pth", "order": 20},
+        {"best_mAP_iter_90288.pth": 2048})
+    presets, _ = mr.scan(root, REPO)
+    assert presets[0].key == "strip_s_gzda_scene"
+
+
+def test_scene_preset_points_at_scene_assets(tmp_path):
+    """场景模型的权重/配置必须指向场景版那一份，不能落到普通版。"""
+    from backend.contracts import model_registry as mr
+
+    root = _scene_models_root(tmp_path)
+    presets, _ = mr.scan(root, REPO)
+    scene = next(p for p in presets if p.key == "strip_s_gzda_scene")
+    assert "detector_strip_s_scene" in scene.files["weights"]
+    assert scene.files["config"].endswith("strip_s_gzda_scene.py")
+    assert scene.files["repo"].endswith("Strip-R-CNN")
 
 
 def test_jobspec_accepts_scene_threshold():

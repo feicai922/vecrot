@@ -335,7 +335,12 @@ class VecrotDockWidget(QDockWidget, FORM_CLASS):
 
         self._presets = available_presets()
         self._preset_info = {d["key"]: d for d in describe()}
+        #: 有模型文件但没写 model.json 的文件夹（面板不给它留位置，但要说明原因）
+        self._skipped_folders = preset_mod.skipped()
 
+        self.modelPresetCombo.setToolTip(
+            "模型来自 %s 下的文件夹（每个文件夹一个 model.json）。\n"
+            "新增/删除模型文件夹后重启 QGIS 生效。" % preset_mod.models_root())
         self.modelPresetCombo.blockSignals(True)
         self.modelPresetCombo.clear()
         for p in self._presets:
@@ -345,7 +350,22 @@ class VecrotDockWidget(QDockWidget, FORM_CLASS):
         if self._presets:
             self._on_preset_changed(0)
         else:
-            self.modelDetailView.setText("⚠ 没有可用的模型组合，请检查部署包是否完整")
+            lines = ["⚠ 没有可用的模型组合"]
+            if self._skipped_folders:
+                lines.append("")
+                lines.append("以下文件夹缺少 model.json（新约定：一个文件夹一个模型）：")
+                for item in self._skipped_folders[:6]:
+                    lines.append("  · %s：%s" % (
+                        os.path.basename(os.path.normpath(item["folder"])),
+                        item["reason"]))
+                lines.append("")
+                lines.append("运行 python deployment/migrate_model_folders.py 自动补写")
+            else:
+                lines.append("请检查 models 包是否放到了 vecrot/models/ 下")
+            self.modelDetailView.setText(chr(10).join(lines))
+            self._log("⚠ 没有可用的模型组合，无法运行")
+            for item in self._skipped_folders:
+                self._log("   跳过 %s：%s" % (item["folder"], item["reason"]))
 
     def _current_preset(self):
         key = self.modelPresetCombo.currentData()
@@ -363,10 +383,18 @@ class VecrotDockWidget(QDockWidget, FORM_CLASS):
         info = self._preset_info.get(preset.key, {})
         lines = [
             "后端：%s%s" % (
-                preset.backend,
+                info.get("backend_label") or preset.backend,
                 (" · 类别数 %d" % preset.num_classes) if preset.num_classes else ""),
         ]
-        for label, path in preset.files.items():
+        # 模型来自哪个文件夹：换模型/排查错配时最有用的一行
+        src = preset.models_dir or ""
+        if src:
+            lines.append("文件夹：%s" % (os.path.basename(os.path.normpath(src)) or src))
+        # 文件角色 → 中文名由 describe() 提供（权重/配置/源码/轮廓适配器…）
+        files = [(item["label"], item["path"])
+                 for item in (info.get("files") or {}).values()] \
+            or list(preset.files.items())
+        for label, path in files:
             mark = "✓" if os.path.exists(path) else "✗"
             # 只显示文件名/目录名：完整绝对路径上百字符会把面板撑到超出屏幕
             # （实测面板被撑到 1000+px）。完整路径放 tooltip。
@@ -387,7 +415,7 @@ class VecrotDockWidget(QDockWidget, FORM_CLASS):
             lines.append(preset.note)
         self.modelDetailView.setText(chr(10).join(lines))
         tip = ["完整路径："]
-        for label, path in preset.files.items():
+        for label, path in files:
             tip.append("%s = %s" % (label, path))
         self.modelDetailView.setToolTip(chr(10).join(tip))
         can_run = bool(info.get("available"))

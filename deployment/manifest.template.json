@@ -24,6 +24,12 @@
       "extra_path": [],
       "env": {},
       "_comment": "RT-DETR 复用 vector 环境。"
+    },
+    "detector_rio": {
+      "python": "",
+      "extra_path": [],
+      "env": {},
+      "_comment": "RiO-DETR / RiO-DETRv2 专用（torch 2.2.2 + timm + cv2/numba/pycocotools），与 detector(mmcv 系) 和 vector(torch 2.4) 都冲突，必须单独一套。"
     }
   },
   "models": {
@@ -36,7 +42,9 @@
       "score_thr": 0.05,
       "nms_iou": 0.3,
       "max_per_img": 2000,
-      "scene_threshold": 0.5
+      "scene_threshold": 0.5,
+      "rio_repo": "third_party/RiO-DETRv2",
+      "_comment_weights": "以下 weights/config 只是「没选模型文件夹时」的兜底默认值；正常路径是面板选 vecrot/models/<文件夹>，由该文件夹的 model.json 决定。"
     },
     "vectorizer": {
       "vecrot_dir": "vecrot",

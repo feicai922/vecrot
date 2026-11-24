@@ -183,6 +183,9 @@ AOI 外的检测标记为 `outside_aoi` 且两个图层都不写出。
 
 ### 新增：固定模型搭配（预设）
 
+> **2026-11-24 起这一节已过时**：预设不再写死在代码里，改成「一个模型文件夹 +
+> `model.json`」，见 §5.2。下表留作历史记录。
+
 不再让用户自由填权重/配置路径（容易配错），改为代码里写死的组合：
 
 | 预设 | 后端 | 说明 |
@@ -320,6 +323,104 @@ manifest 里的 `repo_root` 定位；顺序反了，`_REPO` 在 import 时就定
 
 ---
 
+## 5.2 本轮（2026-11-24）：模型文件夹机制 + RiO-DETR 接入
+
+### 起因
+
+需要接入两个新模型：**融合数据集上重训的 Strip-R-CNN-S**，和**正在训的 RiO-DETR**。
+旧做法把权重/配置/类别数写死在 `backend/contracts/presets.py`，
+加一个模型要改两处代码（backend + 插件镜像）+ 同步测试，而且权重在
+`vecrot/models/`、配置在 `third_party/` 两边分居，想确认"这对权重配哪个配置"只能读代码。
+
+### 改为：一个文件夹 = 一个模型
+
+```text
+vecrot/models/<任意名>/
+├─ model.json        # 声明 backend / 权重 / 配置 / 类别数 / 阈值 / 排序
+├─ *.pth             # 权重（HF 那种"目录即模型"写 "weights": "."）
+└─ *.py / *.yml      # 配置（也可用 src: 指到源码树）
+```
+
+* **权威实现**：`backend/contracts/model_registry.py`（纯标准库）
+* **插件镜像**：`vecrot_qgis/jobs/model_registry.py`，**逐字节相同**，
+  由 `test_registry_mirror_is_byte_identical` + `deployment/verify_model_registry.py` 守
+* 两个 `presets.py` 都退化成薄适配层，对外函数名不变（`available_presets` /
+  `get_preset` / `describe` / `refresh_repo_root` / `PRESETS`），UI 与测试无需改名
+
+**路径写法**（都支持）：相对文件夹 / `.` 本文件夹 / `src:` 相对声明的源码树 /
+`repo:` 相对仓库根 / `models:` 相对 models 根 / 绝对路径。
+
+**加模型 = 拷文件夹**，插件启动扫一遍即可，缺文件时面板显示 ✗ 并写明缺哪个。
+配套工具：
+
+* `deployment/add_model_folder.py`：给一个 `.pth` + `.py/.yml`，一条命令生成文件夹
+  （复制权重、写 `src:`/`repo:` 前缀、回读校验）
+* `deployment/migrate_model_folders.py`：把老目录补成新约定
+* `deployment/verify_model_registry.py`：20 项约定自检
+
+### 老目录迁移
+
+`deployment/migrate_model_folders.py`：按已知目录名补写 `model.json`
+（`detector_strip_s_scene` / `detector_strip_s` / `detector_rt-detr_bbox`），
+**只写声明、不动权重、幂等**，`install.py` 会自动跑。
+有不认识的模型文件时列出来让人自己写声明，**不猜**。
+
+### 新增：RiO-DETR / RiO-DETRv2 后端（`rio_detr`）
+
+代码在 `backend/detector/rio_detr_backend.py`。它是 DEIM/D-FINE 血统
+（`engine.core.YAMLConfig` + `model.deploy()` + `postprocessor.deploy()`），
+既不是 mmrotate 也不是 HF Transformers，所以是独立后端。
+
+| 项 | 值 |
+|---|---|
+| 加载 | `YAMLConfig(cfg.yml, resume=ckpt)`；优先取 `ckpt["ema"]["module"]` |
+| 预处理 | 保比例缩放 + 右/下补 0 到 `input_shape`，像素 **只 /255**（无 mean/std） |
+| 输出 | `(labels, boxes[B,Q,5], scores)`，`boxes = cx,cy,w,h,angle(rad)`，**已是原图像素** |
+| NMS | 不需要（DETR top-k 查询，通常 300） |
+| 环境 | **独立的 `vecrot-rio`**：torch 2.2.2 + torchvision 0.17.2 + timm + cv2 + numba + pycocotools |
+| manifest | `environments.detector_rio`，调度按 profile 自动切换（`_env_role_for`） |
+
+**与官方推理逐位对齐**（本机实测，`tools/inference/torch_inf.py` vs 本后端）：
+
+```text
+官方 top5 : [(0.3759, 248.5, 216.4, 51.4, 41.3, 0.109), (0.3663, …), …]
+后端 top5 : [(0.3759, 248.5, 216.4, 51.4, 41.3, 0.109), (0.3663, …), …]
+一致: True
+```
+
+### 阈值/参数如何传递
+
+`model.json` 的 `detector_options` → job.json `inference.detector_options` →
+`jobspec` 校验（只接受平铺标量）→ `runner._detector_options()` 合并，
+优先级 **job（模型文件夹）> manifest > 后端默认**。
+`detector_repo` 也一起进 job.json（RiO / Strip 各自的源码树）。
+
+### 实测（本机，2026-11-24）
+
+RiO-DETRv2-X（65.5M）在 gzda 数据上训到 **epoch 0**（3761 iters）后崩了
+（`coco_evaluator.cleanup()` 处 None —— 训练侧问题，见文末）。用这个中途权重验证接入：
+
+| 检查 | 结果 |
+|---|---|
+| `verify_rio_runtime.py`（CPU） | **10/10 通过**；加载 26s，单瓦片 43s |
+| 权重结构 | `missing=0 unexpected=0`，`weights_source=ema` |
+| 与官方脚本输出 | **逐位一致**（分数与坐标） |
+| 6 张真实瓦片（1024²，score≥0.4） | GT 74 / 检出 230 / 命中 50 → R=0.676 P=0.217 |
+| 纯背景瓦片（GT=0） | max score **0.083**，不误报 |
+
+> 精度低是**模型没训完**（1 epoch），不是接入问题：同一瓦片上官方脚本给出同样的
+> 低分（max 0.376），而 top-1 框中心 (248.5, 216.4) 与 GT 中心 (241, 212) 只差 8 px。
+> 训练崩掉的根因见 §7。
+
+### 验证入口
+
+```powershell
+python deployment/verify_model_registry.py      # 20 项：约定/镜像/路径/后端/环境角色
+python deployment/verify_models.py              # 模型文件夹逐项就绪检查
+python deployment/migrate_model_folders.py      # 老目录补 model.json
+deployment\envs\rio\python.exe deployment/verify_rio_runtime.py --repo … --config … --weights …
+```
+
 ## 6. 已验证清单
 
 `python deployment/verify.py`：
@@ -327,9 +428,10 @@ manifest 里的 `repo_root` 定位；顺序反了，`_REPO` 在 import 时就定
 | 检查 | 项数 |
 |---|---|
 | 插件静态检查 | 6 |
-| pytest | 71 |
+| pytest | 133（2026-11-24 起；Linux 无 QGIS/pyproj 时有 18 项环境性失败） |
 | 几何 + GeoPackage 自检 | 6 |
-| 检测配置契约 | 37 |
+| 检测配置契约 | 36 |
+| **模型文件夹注册表**（新增） | 20 |
 | 重建基座校验 | 1 |
 | QGIS 运行时三件套 | 19 + 13 + 24 = 56 |
 
@@ -356,6 +458,10 @@ deployment\envs\vector\python.exe   deployment\verify_vector_runtime.py     # 16
 | 导出故障注入 | 有 staging + 校验，未注入写盘失败 |
 | 离线部署包 | 环境是 conda 目录，未验证搬迁 |
 | 多 GPU / 流水线（M5） | 未实现 |
+| **RiO-DETR 精度** | 只有 epoch 0 的中途权重可测，R/P 数字不代表模型能力 |
+| **融合数据集 Strip-R-CNN-S 精度** | 权重在 Windows 机器上；本次只验证"放文件夹即可被选中"，未跑真实瓦片 |
+| **轮廓模型替换** | 按需求暂缓；`model.json` 已留 `vector` 块可覆盖轮廓权重 |
+| Windows 侧实测 | 本次改动均在 Linux 侧完成静态/单元/真实权重验证，Windows 需按 docs 重跑 |
 
 ---
 

@@ -39,7 +39,12 @@ class InferenceParams:
     #: 这三项让「同一套流水线换模型」不需要改 manifest。
     detector_weights: str | None = None
     detector_config: str | None = None
+    #: 检测源码树（Strip-R-CNN / RiO-DETRv2）。模型文件夹里声明，路径必须是绝对路径。
+    detector_repo: str | None = None
     detector_num_classes: int | None = None
+    #: 后端专用参数（score_thr / nms_iou / max_per_img / scene_threshold …），
+    #: 来自模型文件夹的 model.json，优先级高于部署 manifest 的默认值。
+    detector_options: dict = field(default_factory=dict)
     vector_ckpt: str | None = None
     vector_base: str | None = None
     #: 场景分类阈值：带 scene_head 的检测模型低于此值直接判「无建筑」并跳过。
@@ -128,6 +133,37 @@ def _check_aoi(aoi: Any) -> dict:
     return aoi
 
 
+def _detector_options(inf_raw: dict) -> dict:
+    """解析 ``inference.detector_options``（模型文件夹带来的后端参数）。
+
+    只接受一层平铺的标量：后端参数是 ``score_thr`` / ``nms_iou`` /
+    ``scene_threshold`` 这类东西，嵌套结构说明调用方传错了字段，
+    与其透传到模型里报奇怪的错，不如在这里拒绝。
+    """
+    raw = inf_raw.get("detector_options")
+    if raw is None:
+        return {}
+    if not isinstance(raw, dict):
+        raise JobSpecError("JOB_SPEC_INVALID",
+                           "inference.detector_options 必须是对象")
+    if len(raw) > 32:
+        raise JobSpecError("JOB_SPEC_INVALID",
+                           f"inference.detector_options 条目过多（{len(raw)} > 32）")
+    out = {}
+    for key, value in raw.items():
+        if not isinstance(key, str) or not key.strip():
+            raise JobSpecError("JOB_SPEC_INVALID",
+                               "inference.detector_options 的键必须是非空字符串")
+        if isinstance(value, bool) or isinstance(value, (int, float, str)):
+            out[key.strip()] = value
+        else:
+            raise JobSpecError(
+                "JOB_SPEC_INVALID",
+                f"inference.detector_options.{key} 只接受数字/布尔/字符串，"
+                f"实际 {type(value).__name__}")
+    return out
+
+
 def parse_job_spec(raw: Any) -> JobSpec:
     if not isinstance(raw, dict):
         raise JobSpecError("JOB_SPEC_INVALID", "job.json 顶层必须是对象")
@@ -191,6 +227,8 @@ def parse_job_spec(raw: Any) -> JobSpec:
         vector_profile=inf_raw.get("vector_profile"),
         detector_weights=_opt_path("detector_weights"),
         detector_config=_opt_path("detector_config"),
+        detector_repo=_opt_path("detector_repo"),
+        detector_options=_detector_options(inf_raw),
         detector_num_classes=(
             int(inf_raw["detector_num_classes"])
             if inf_raw.get("detector_num_classes") not in (None, "") else None),

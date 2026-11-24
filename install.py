@@ -43,6 +43,9 @@ CONDA_NAMES = {
     "detector": ("vecrot-det", "vecrot_det"),
     "vector": ("vecrot-vllm", "vecrot_vllm", "vecrot-vector"),
     "detector_hf": ("vecrot-vllm", "vecrot_vllm"),
+    # RiO-DETR 需要 torch 2.2.2 + timm + cv2/numba/pycocotools，
+    # 与 detector(mmcv/torch2.0) 和 vector(torch2.4) 都不兼容，单独一套
+    "detector_rio": ("vecrot-rio", "vecrot_rio", "riodetr", "vecrot-riodetr"),
 }
 
 #: 环境角色 → 环境变量覆盖名
@@ -51,6 +54,7 @@ ENV_VARS = {
     "detector": "VECROT_PY_DETECTOR",
     "vector": "VECROT_PY_VECTOR",
     "detector_hf": "VECROT_PY_VECTOR",
+    "detector_rio": "VECROT_PY_RIO",
 }
 
 
@@ -106,7 +110,7 @@ def _candidate_pythons(role: str) -> list:
 
 def detect_environments() -> dict:
     mapping = {}
-    for role in ("coordinator", "detector", "vector", "detector_hf"):
+    for role in ("coordinator", "detector", "vector", "detector_hf", "detector_rio"):
         found = ""
         for p in _candidate_pythons(role):
             if p and os.path.isfile(p):
@@ -202,14 +206,34 @@ print("[OK] 已更新目标 profile 设置", flush=True)
 '''
 
 
+def migrate_legacy_models(check_only: bool = False) -> None:
+    """把老的模型目录补上 model.json（幂等，失败不阻断安装）。
+
+    模型列表现在由文件夹决定，而网盘 models 包是旧约定（没有 model.json）。
+    不做这一步，升级后用户会看到"一个模型都没有"。
+    """
+    log("\n[2/4] 迁移模型文件夹（补写 model.json）")
+    script = os.path.join(REPO, "deployment", "migrate_model_folders.py")
+    if not os.path.isfile(script):
+        log("       - 找不到迁移脚本，跳过")
+        return
+    argv = [sys.executable, "-X", "utf8", script] + (["--check"] if check_only else [])
+    subprocess.run(argv, cwd=REPO)
+    log("")
+
+
 def selfcheck(m: dict) -> int:
     problems = 0
 
     log("[3/4] 自检：Python 环境")
-    for role in ("coordinator", "detector", "vector", "detector_hf"):
+    for role in ("coordinator", "detector", "vector", "detector_hf", "detector_rio"):
         p = ((m.get("environments") or {}).get(role) or {}).get("python", "")
         if p and os.path.isfile(p):
             log(f"       ✓ {role:12} {p}")
+            continue
+        if role == "detector_rio":
+            # 只有用户要跑 RiO-DETR 才需要；没建环境不算安装失败
+            log(f"       - {role:12} 未配置（只影响 RiO-DETR 模型）")
             continue
         if role == "detector_hf":
             vec = ((m.get("environments") or {}).get("vector") or {}).get("python", "")
@@ -229,6 +253,7 @@ def selfcheck(m: dict) -> int:
         log("         setx VECROT_PY_COORDINATOR <vecrot-geo 环境的 python.exe 绝对路径>")
         log("         setx VECROT_PY_DETECTOR    <vecrot-det 环境的 python.exe 绝对路径>")
         log("         setx VECROT_PY_VECTOR      <vecrot-vllm 环境的 python.exe 绝对路径>")
+        log("         setx VECROT_PY_RIO         <vecrot-rio 环境的 python.exe 绝对路径>（跑 RiO-DETR 才需要）")
         log("       （setx 后要新开一个命令行窗口才生效）")
 
     log("\n[4/4] 自检：模型文件")
@@ -270,6 +295,7 @@ def main(argv=None) -> int:
         manifest = build_manifest(check_only=True)
         if not manifest:
             return 1
+        migrate_legacy_models(check_only=args.check)
         if args.check or not args.ui_only:
             problems = selfcheck(manifest)
             if problems:

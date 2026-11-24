@@ -1,34 +1,42 @@
-"""插件侧的固定模型搭配（**不依赖 backend 包**）。
+"""插件侧的模型搭配列表（**不依赖 backend 包**）。
 
-为什么要有这份镜像
+为什么要有这份东西
 ------------------
 插件安装在 QGIS profile 的 ``python/plugins`` 下，那里没有 ``backend`` 包，
-`sys.path` 也不包含仓库根。所以插件不能 ``from backend.contracts.presets import ...``
-（实测会在 QGIS 里 ImportError）。
+`sys.path` 也不包含仓库根，所以插件不能 ``from backend.contracts.presets import ...``。
 
-因此：
+现在模型列表由**模型文件夹**驱动（``vecrot/models/<名>/model.json``），
+扫描逻辑在 ``jobs/model_registry.py``——它与
+``backend/contracts/model_registry.py`` **逐字节相同**，由
+``tests/test_registry_parity.py`` 守住。本文件只做两件插件特有的事：
 
-* **权威定义**在 ``backend/contracts/presets.py``（后端用，负责展开成 job.json 字段）
-* **本文件是它的镜像**，只保留面板展示与路径校验所需的最小信息
-* 两者一致性由 ``tests/test_presets_parity.py`` 守住：任何一边改了 key/路径，
-  测试会失败并提示同步
+1. **定位仓库根**：插件在 profile 里时只能靠 manifest 的 ``repo_root``；
+2. 把扫描结果暴露成与 backend 侧同名的函数（``available_presets`` / ``describe`` …）。
 
-新增模型时**两处都要改**。这是刻意的冗余——插件必须能在没有后端代码的环境里
-独立展示"有哪些可用模型、缺哪个文件"。
+这样"加一个模型"只需要建一个文件夹，两边都不用改代码。
 """
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass, field
 
-#: 仓库根：插件在 <repo>/qgis_plugin/vecrot_qgis/jobs/ 下，上四级到仓库根。
-#: 装在 profile 里时这个推导无意义，但那种情况下路径会由 manifest 或
-#: 用户安装脚本写入的绝对路径决定（见 _repo_root()）。
+from . import model_registry as _mr
+from .model_registry import (          # noqa: F401 - 供面板直接 import
+    BACKEND_LABELS,
+    SPEC_FILENAME,
+    ModelPreset,
+    ModelSpecError,
+    default_models_root,
+    load_spec,
+    resolve_path,
+    scan,
+    validate_folder,
+)
+
 _HERE = os.path.dirname(os.path.abspath(__file__))
 
 
 def _repo_root() -> str:
-    """确定权重所在仓库根。
+    """确定模型所在仓库根。
 
     查找顺序（实测：插件装在 profile 里时前两条会失败，必须靠第三、四条）：
 
@@ -37,7 +45,7 @@ def _repo_root() -> str:
     3. QGIS 设置 ``vecrot/manifest_path`` 指向的 manifest 里的 ``repo_root``
     4. 环境变量 ``VECROT_REPO_ROOT``
 
-    都找不到时返回 ``_HERE`` —— 此时所有预设会显示为"缺文件"，
+    都找不到时返回 ``_HERE`` —— 此时所有模型会显示为"缺文件"，
     用户能看到明确提示而不是静默失败。
     """
     cur = _HERE
@@ -142,177 +150,78 @@ def _root_from_manifest_setting() -> str | None:
     return None
 
 
-#: 当前使用的仓库根。模块 import 时先算一次，之后可由 refresh_repo_root() 更新。
+#: 当前使用的仓库根 / 模型根。模块 import 时先算一次，之后可 refresh。
 _REPO = _repo_root()
+_MODELS_ROOT = _mr.default_models_root(_REPO)
+PRESETS: tuple = ()
+_BY_KEY: dict = {}
+_SKIPPED: list = []
+
+
+def _rebuild(repo_root: str | None = None, models_root: str | None = None) -> None:
+    global _REPO, _MODELS_ROOT, PRESETS, _BY_KEY, _SKIPPED
+    if repo_root:
+        _REPO = os.path.normpath(repo_root)
+    if models_root:
+        _MODELS_ROOT = os.path.normpath(models_root)
+    else:
+        _MODELS_ROOT = _mr.default_models_root(_REPO)
+    found, dropped = _mr.scan(_MODELS_ROOT, _REPO)
+    PRESETS = tuple(found) + tuple(_mr.builtin_presets(_MODELS_ROOT, _REPO))
+    _BY_KEY = {p.key: p for p in PRESETS}
+    _SKIPPED = dropped
 
 
 def refresh_repo_root(root: str | None = None) -> str:
-    """重新解析仓库根并**重建**所有预设的路径。
+    """重新解析仓库根并**重扫**模型文件夹。
 
     为什么需要：模块级常量在 import 时求值，而 QGIS 插件 import 发生在
     manifest 定位之前。若 manifest 里有 repo_root（插件装在 profile 时的唯一
     可靠线索），必须等 manifest 定位后再解析一次，否则所有路径会拼到插件目录下
     （实战报错：全部显示"缺文件"）。
 
-    ``root`` 传了就**直接用它**，跳过自动发现。自动发现是「向上找含 backend/
-    或 deployment/ 的目录」，当本仓库被嵌进另一个同构仓库时（开发布局
-    ``<dev_repo>/github_repo/`` 就是这种情况），会先命中外层，此时必须能指定。
-
-    返回解析到的仓库根。
+    ``root`` 传了就**直接用它**，跳过自动发现。
     """
-    global _REPO, STRIP_GZDA, STRIP_GZDA_SCENE, RTDETR_ROOF, VECTOR_ONLY, PRESETS, _BY_KEY
-    _REPO = os.path.normpath(root) if root else _repo_root()
-    STRIP_GZDA = _make_strip_gzda()
-    STRIP_GZDA_SCENE = _make_strip_gzda_scene()
-    RTDETR_ROOF = _make_rtdetr()
-    VECTOR_ONLY = _make_vector_only()
-    PRESETS = (STRIP_GZDA_SCENE, RTDETR_ROOF, VECTOR_ONLY)
-    _BY_KEY = {p.key: p for p in PRESETS}
+    _rebuild(repo_root=root or _repo_root())
     return _REPO
 
 
-#: 生成器用的绝对路径版本（_r 依赖当前 _REPO）
-def _abs(rel: str) -> str:
-    return os.path.normpath(os.path.join(_REPO, rel))
+def refresh_models_root(models_root: str) -> str:
+    _rebuild(models_root=models_root)
+    return _MODELS_ROOT
 
 
-@dataclass(frozen=True)
-class ModelPreset:
-    key: str
-    label: str
-    backend: str
-    files: dict = field(default_factory=dict)
-    num_classes: int | None = None
-    note: str = ""
-
-    def missing(self) -> list[str]:
-        if not self.files:
-            return ["（该预设尚未配置权重路径）"]
-        out = []
-        for label, path in self.files.items():
-            if not path or not os.path.exists(path):
-                out.append(f"{label}: {path or '（未配置）'}")
-        return out
-
-    def is_available(self) -> bool:
-        return not self.missing()
-
-    def to_job_fields(self) -> dict:
-        f = self.files
-        out: dict = {"detector_profile": self.backend}
-        if f.get("weights"):
-            out["detector_weights"] = f["weights"]
-        if f.get("config"):
-            out["detector_config"] = f["config"]
-        if self.num_classes:
-            out["detector_num_classes"] = int(self.num_classes)
-        if f.get("vector_ckpt"):
-            out["vector_ckpt"] = f["vector_ckpt"]
-        if f.get("vector_base"):
-            out["vector_base"] = f["vector_base"]
-        return out
+def models_root() -> str:
+    return _MODELS_ROOT
 
 
-def _make_strip_gzda() -> ModelPreset:
-    return ModelPreset(
-        key="strip_s_gzda_sc055m",
-        label="建筑专用 · Strip-R-CNN-S + ScaleCond 0.55M（旋转框，推荐）",
-        backend="strip_s_gzda",
-        files={
-            "weights": _abs("vecrot/models/detector_strip_s/"
-                            "best_mAP_iter_90288.pth"),
-            "config": _abs("third_party/Strip-R-CNN/configs/"
-                           "gzda/strip_s_gzda.py"),
-            "vector_ckpt": _abs("vecrot/models/adaptor_sc_055m"),
-            "vector_base": _abs("vecrot/models/official_vocab_635"),
-        },
-        num_classes=1,
-        note="本仓库默认组合。检测权重 missing=0/unexpected=0；"
-             "真实瓦片 R=0.67/P=0.74。",
-    )
+def repo_root() -> str:
+    return _REPO
 
 
-def _make_vector_only() -> ModelPreset:
-    return ModelPreset(
-        key="vector_only",
-        label="只跑轮廓（读已有检测结果 jsonl）",
-        backend="jsonl",
-        files={
-            "vector_ckpt": _abs("vecrot/models/adaptor_sc_055m"),
-            "vector_base": _abs("vecrot/models/official_vocab_635"),
-        },
-        note="需要 manifest 的 models.detections_jsonl 指向窗口级检测结果。",
-    )
+def skipped() -> list[dict]:
+    """没被列进来的模型文件夹及原因（面板要显示）。"""
+    return list(_SKIPPED)
 
 
-def _make_rtdetr() -> ModelPreset:
-    return ModelPreset(
-        key="rtdetr_roof",
-        label="卫星屋顶 · RT-DETR R101vd（水平框，单类别）",
-        backend="rtdetr_hf",
-        files={
-            "weights": _abs("vecrot/models/detector_rt-detr_bbox"),
-            "vector_ckpt": _abs("vecrot/models/adaptor_sc_055m"),
-            "vector_base": _abs("vecrot/models/official_vocab_635"),
-        },
-        num_classes=1,
-        note="HF 版 RT-DETR，1 类屋顶，固定 640×640。AP_small 仅 0.248，"
-             "高分辨率影像小目标漏检偏多。",
-    )
-
-
-def _make_strip_gzda_scene() -> ModelPreset:
-    return ModelPreset(
-        key="strip_s_gzda_scene",
-        label="建筑专用 · Strip-R-CNN-S + 场景分类（大范围推理推荐）",
-        backend="strip_s_gzda",
-        files={
-            "weights": _abs("vecrot/models/detector_strip_s_scene/"
-                            "best_mAP_iter_37620.pth"),
-            "config": _abs("third_party/Strip-R-CNN/configs/gzda/strip_s_gzda_scene.py"),
-            "vector_ckpt": _abs("vecrot/models/adaptor_sc_055m"),
-            "vector_base": _abs("vecrot/models/official_vocab_635"),
-        },
-        num_classes=1,
-        note="带 scene_head：先判窗口有无建筑，无建筑直接跳过检测与轮廓。"
-             "纯背景窗口耗时降到 1/3.5。",
-    )
-
-
-# 初始构建（import 时）。manifest 定位后可调 refresh_repo_root() 重建。
-STRIP_GZDA = _make_strip_gzda()
-STRIP_GZDA_SCENE = _make_strip_gzda_scene()
-VECTOR_ONLY = _make_vector_only()
-RTDETR_ROOF = _make_rtdetr()
-PRESETS: tuple[ModelPreset, ...] = (
-    STRIP_GZDA_SCENE, RTDETR_ROOF, VECTOR_ONLY)
-_BY_KEY = {p.key: p for p in PRESETS}
-
-
-def available_presets(only_available: bool = True) -> list[ModelPreset]:
+def available_presets(only_available: bool = True) -> list:
     """预设列表。
 
-    默认只返回**文件齐备**的：精简分发包可能不含某些权重（例如
-    ``base_v1`` 与旧检测权重），此时在面板上列出「缺文件」的选项只会让
-    用户以为装坏了。真要排查缺件时用 ``only_available=False`` 看全量。
+    默认只返回**文件齐备**的：精简分发包可能不含某些权重，此时在面板上列出
+    「缺文件」的选项只会让用户以为装坏了。排查缺件时用 ``only_available=False``。
     """
     if not only_available:
         return list(PRESETS)
     return [p for p in PRESETS if p.is_available()]
 
 
-def get_preset(key: str) -> ModelPreset | None:
+def get_preset(key: str):
     return _BY_KEY.get(key)
 
 
-def describe() -> list[dict]:
+def describe() -> list:
     """给面板/自检用的可读清单（含缺件说明）。"""
-    return [{
-        "key": p.key,
-        "label": p.label,
-        "backend": p.backend,
-        "available": p.is_available(),
-        "missing": p.missing(),
-        "num_classes": p.num_classes,
-        "note": p.note,
-    } for p in PRESETS]
+    return [p.describe() for p in PRESETS]
+
+
+_rebuild()

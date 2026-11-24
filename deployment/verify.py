@@ -45,6 +45,9 @@ def main() -> int:
     if not run("检测配置契约校验（不需 torch）",
                [py, os.path.join(HERE, "verify_detector_config.py")]):
         failures.append("verify_detector_config")
+    if not run("模型文件夹注册表（两层扫描 + 镜像一致性）",
+               [py, os.path.join(HERE, "verify_model_registry.py")]):
+        failures.append("verify_model_registry")
     rebuilt = os.path.join(REPO, "vecrot", "models", "official_vocab_635",
                            "REBUILD_INFO.json")
     if os.path.isfile(rebuilt):

@@ -164,10 +164,16 @@ def build_detector(profile: str, options: dict | None = None) -> DetectorBackend
         from .rtdetr_backend import RtdetrDetector
 
         return RtdetrDetector(options)
+    if profile == "rio_detr":
+        # RiO-DETR / RiO-DETRv2（DEIM/D-FINE 血统：YAML 配置 + checkpoint）
+        from .rio_detr_backend import RioDetrDetector
+
+        return RioDetrDetector(options)
     raise DetectorNotAvailable(
         "DETECTOR_PROFILE_UNKNOWN",
         f"未知 detector_profile：{profile!r}"
-        "（可选 null / jsonl / strip_s_gzda / mmrotate_obb / mmdet_hbb / rtdetr_hf）")
+        "（可选 null / jsonl / strip_s_gzda / mmrotate_obb / mmdet_hbb / "
+        "rtdetr_hf / rio_detr）")
 
 
 def rgb_to_model_array(rgb: np.ndarray) -> np.ndarray:
