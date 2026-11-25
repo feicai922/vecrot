@@ -89,7 +89,7 @@ def _config_decl(path: str, repo_dir: str | None, folder: str,
 
 
 def list_folders() -> int:
-    root = mr.default_models_root(REPO)
+    root = mr.resolve_models_root(REPO, None)
     presets, skipped = mr.scan(root, REPO)
     print(f"models 根：{root}\n")
     for p in presets:
@@ -144,7 +144,7 @@ def main(argv=None) -> int:
             print(f"⚠ 源码树不存在：{repo_dir}\n"
                   f"  {args.backend} 需要它；请先放到该位置或用 --repo 指定")
 
-    root = mr.default_models_root(REPO)
+    root = mr.resolve_models_root(REPO, None)
     folder = os.path.join(root, args.name)
     weights_src = os.path.normpath(
         args.weights if os.path.isabs(args.weights) else os.path.join(REPO, args.weights))

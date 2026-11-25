@@ -5,13 +5,14 @@
     python deployment/build_models_package.py --out "D:/上传/vecrot-models" \\
         --rio-config third_party/RiO-DETRv2/configs/rio-gzda/riov2_hgnetv2_x_gzda_12e.yml
 
-产出**两个**目录：
+产出**一个**目录 ``<out>/models/``：解压后就是用户机器上的 ``vecrot/models/``。
 
-* ``<out>/vecrot-models-package/``：完整包骨架。解压后应正好是用户机器上的
-  ``vecrot/models/``。脚本只写 ``model.json`` / RiO 配置 / 说明文件，
-  **权重由你从本机拷进来**（脚本不会去动几 GB 的权重）。
-* ``<out>/vecrot-models-patch/``：增量补丁。只含各文件夹新增的 ``model.json``
-  （几 KB），给"已经有老模型包"的用户升级用 —— 网盘单独传这一个就行。
+脚本只写 ``model.json`` / RiO 单文件配置 / 各目录的 ``放权重.txt`` 说明，
+**权重由你从本机拷进来**（脚本不碰几 GB 的权重），拷完压成 ``models.zip`` 上传网盘。
+
+项目只有一条分发路线：**GitHub 给代码，网盘给模型**。用户 ``git clone`` 之后
+把 ``models.zip`` 解压到 ``vecrot/models/``（或用 manifest 的 ``models_root``
+指到别的盘），环境自己配好，装完插件就能用。没有"老用户补丁"这种东西。
 
 设计原则：``model.json`` 的内容**复用** ``migrate_model_folders.LEGACY``，
 保证"网盘包里的声明"和"迁移脚本补出来的声明"永远一致。
@@ -114,53 +115,11 @@ def write_text(path: str, text: str) -> None:
         f.write(text)
 
 
-def build_patch(out_root: str) -> str:
-    """增量补丁：只有各文件夹的 model.json（+ RiO 的单文件配置）。"""
-    patch = os.path.join(out_root, "vecrot-models-patch")
-    rows = []
-    for folder, spec in list(LEGACY.items()) + list(NEW_MODELS.items()):
-        write_json(os.path.join(patch, folder, mr.SPEC_FILENAME), spec)
-        rows.append((folder, spec["key"], spec["backend"]))
-
-    lines = [
-        "# 增量补丁：只补 model.json（已有模型包的用户）",
-        "",
-        "从这一版开始，面板的「模型搭配」下拉框由**文件夹**驱动：",
-        "每个模型文件夹里必须有一份 `model.json`，声明自己的后端/权重/配置/阈值。",
-        "老模型包（网盘旧版）里没有这个文件，所以升级代码后面板会显示",
-        "「没有可用的模型组合」——那不是装坏了，是缺声明。",
-        "",
-        "## 用法（三种，任选）",
-        "",
-        "1. **自动**（推荐）：在仓库根目录跑",
-        "   ```",
-        "   python -X utf8 deployment\\migrate_model_folders.py",
-        "   ```",
-        "   它会按已知目录名补写 model.json，幂等，不动权重。",
-        "2. **手动合并**：把本补丁里各文件夹的 `model.json` 拷到",
-        "   `<仓库>\\vecrot\\models\\<同名文件夹>\\` 下。",
-        "3. **重新下载完整包**（见另一个网盘文件夹），最省事。",
-        "",
-        "## 本补丁包含",
-        "",
-        "| 文件夹 | key | 后端 |",
-        "|---|---|---|",
-    ]
-    lines += [f"| `{folder}` | `{key}` | `{backend}` |" for folder, key, backend in rows]
-    lines += [
-        "",
-        "> `detector_rio_gzda` 还需要 RiO-DETRv2 源码与独立 conda 环境",
-        "> （`vecrot-rio`，torch 2.2.2 + timm + cv2/numba/pycocotools），",
-        "> 见 docs/安装教程-自建环境.md §5.6。",
-        "",
-    ]
-    write_text(os.path.join(patch, "README-补丁说明.md"), "\n".join(lines))
-    return patch
-
-
 def build_full(out_root: str, rio_config: str | None) -> str:
-    """完整包骨架：目录结构 + model.json + 说明；权重留空待拷。"""
-    full = os.path.join(out_root, "vecrot-models-package")
+    """模型包骨架：目录结构 + model.json + 说明；权重留空待拷。"""
+    full = os.path.join(out_root, "models")
+    if os.path.isdir(full):
+        shutil.rmtree(full)
 
     # 1) 轮廓资产：只建目录 + 说明
     for name, (desc, files) in ASSET_DIRS.items():
@@ -217,90 +176,85 @@ def build_full(out_root: str, rio_config: str | None) -> str:
             yaml.safe_dump(cfg, f, allow_unicode=True, sort_keys=False, width=120)
 
     # 4) 包说明
-    readme = """# vecrot 模型包（文件夹约定版）
+    readme = """# vecrot 模型包
 
-解压后应正好是仓库里的 `vecrot/models/`：
+解压后得到 `models/` 目录，把它放到 `vecrot/models/`（或 `VECROT_MODELS_ROOT`
+/manifest `models_root` 指向的位置）。面板的「模型搭配」下拉框就是按这里的
+子目录列的：**一个文件夹 = 一个可选模型**。
 
 ```text
-<仓库根>/vecrot/models/     ← 本目录的内容
-├─ adaptor_sc_055m/
-├─ official_vocab_635/
-├─ base_v1/                 （可选）
-├─ detector_strip_s_scene/
-├─ detector_strip_s/
-├─ detector_rt-detr_bbox/
-├─ detector_strip_s_fusion/      ← 新增
-└─ detector_rio_gzda/            ← 新增
+models/
+├─ adaptor_sc_055m/          轮廓适配器
+├─ official_vocab_635/       轮廓基座
+├─ base_v1/                  可选：重建基座原料
+├─ detector_strip_s_scene/   Strip-R-CNN-S + 场景分类（默认推荐）
+├─ detector_strip_s/         不带场景分类的旧权重
+├─ detector_rt-detr_bbox/    RT-DETR（HF 格式，水平框）
+├─ detector_strip_s_fusion/  融合数据集重训的 Strip-R-CNN-S
+└─ detector_rio_gzda/        RiO-DETRv2-X（旋转框）
 ```
 
-每个**检测模型文件夹**里都有一份 `model.json`，面板的「模型搭配」下拉框
-就是按它列的（一个文件夹 = 一项）。加/换模型只要建文件夹，不用改代码。
+## 发布前清单（维护者）
 
-## 打包前检查清单（维护者）
+权重不在生成脚本里，按下面的表拷进对应目录：
 
-| 目录 | 需要放进去的权重 | 备注 |
+| 目录 | 放什么 | 体积 |
 |---|---|---|
-| `adaptor_sc_055m/` | `trainable.pt` + tokenizer/arch | 未变，原样拷 |
-| `official_vocab_635/` | `model.safetensors` 约 1.5 GB + 3 个 json | 未变，原样拷 |
-| `detector_strip_s_scene/` | `best_mAP_iter_37620.pth` 约 540 MB | 未变 + 新增 model.json |
-| `detector_strip_s/` | `best_mAP_iter_90288.pth` 约 540 MB | 未变 + 新增 model.json |
-| `detector_rt-detr_bbox/` | HF 三个文件（safetensors 约 306 MB） | 未变 + 新增 model.json |
-| `detector_strip_s_fusion/` | `best.pth`（融合数据集重训权重） | **新**，名字对不上就改 model.json |
-| `detector_rio_gzda/` | `last.pth`（RiO-DETRv2-X，约 1.0 GB） | **新**，配置已随包 |
-| `base_v1/` | 可选，1.7 GB | 只影响“重建基座”，可不上传 |
+| `adaptor_sc_055m/` | `trainable.pt` + tokenizer/arch | 小 |
+| `official_vocab_635/` | `model.safetensors` + 3 个 json | 约 1.5 GB |
+| `detector_strip_s_scene/` | `best_mAP_iter_37620.pth` | 约 540 MB |
+| `detector_strip_s/` | `best_mAP_iter_90288.pth` | 约 540 MB |
+| `detector_rt-detr_bbox/` | `config.json` + `preprocessor_config.json` + `model.safetensors` | 约 306 MB |
+| `detector_strip_s_fusion/` | `best.pth`（融合数据重训；名字不同就改 model.json） | 约 540 MB |
+| `detector_rio_gzda/` | `last.pth`（RiO-DETRv2-X；建议用 EMA 权重） | 约 1.0 GB |
+| `base_v1/` | 可选，只影响“重建基座” | 约 1.7 GB |
 
-放完之后在仓库根跑这两条确认无误，再压缩上传：
+拷完在仓库根确认，再压缩上传：
 
 ```powershell
 python -X utf8 deployment\\verify_models.py
 python -X utf8 deployment\\add_model_folder.py --list
 ```
 
-## 用户侧怎么装
+## 用户侧
 
-解压本目录到 `<仓库根>\\vecrot\\models\\`（不要形成 `vecrot/models/models/`），
-然后 `python install.py`。老用户若已有旧模型包，只需下载「增量补丁」
-或跑一次 `python deployment\\migrate_model_folders.py`。
+```
+<仓库根>/vecrot/models/     ← 本目录内容
+python install.py
+```
 
-## 别忘的两件事
+## 源码不在这个包里
 
-1. **源码不在这个包里**：`third_party/Strip-R-CNN` 与 `third_party/RiO-DETRv2`
-   随 Git 仓库分发。跑 RiO-DETR 还额外需要 conda 环境 `vecrot-rio`
-   （torch 2.2.2 + timm + cv2/numba/pycocotools）。
-2. **RiO-DETRv2 是 AGPL-3.0**：若要随包/随仓库分发它的源码，请遵守其许可
-   （保留 LICENSE 与来源说明）。最稳的做法是让用户自己
-   `git clone https://github.com/RicePasteM/RiO-DETRv2` 到 `third_party/RiO-DETRv2/`。
+`third_party/Strip-R-CNN`、`third_party/RiO-DETRv2` 随 GitHub 分发。
+跑 RiO-DETR 还需要独立 conda 环境 `vecrot-rio`（torch 2.2.2 + timm +
+cv2/numba/pycocotools），见 docs/安装教程-自建环境.md §5.6。
+
+RiO-DETRv2 上游是 AGPL-3.0，其 LICENSE 原样保留在
+`third_party/RiO-DETRv2/LICENSE`，详见该目录的 `VECROT_NOTICE.md`。
 """
     write_text(os.path.join(full, "README-模型包.md"), readme)
     return full
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description="生成网盘模型包目录骨架")
-    ap.add_argument("--out", required=True, help="输出根目录（会建两个子目录）")
+    ap = argparse.ArgumentParser(description="生成网盘模型包目录（models/）")
+    ap.add_argument("--out", required=True, help="输出根目录；脚本在其中建 models/")
     ap.add_argument("--rio-config", default=None,
                     help="RiO-DETR 训练用的 .yml（会被展开成单文件放进模型文件夹）")
-    ap.add_argument("--patch-only", action="store_true", help="只生成增量补丁")
-    ap.add_argument("--full-only", action="store_true", help="只生成完整包骨架")
-    ap.add_argument("--zip", action="store_true", help="顺手压成 zip")
+    ap.add_argument("--zip", action="store_true", help="顺手压成 models.zip")
     args = ap.parse_args(argv)
 
     out = os.path.abspath(args.out)
     os.makedirs(out, exist_ok=True)
-    made = []
-    if not args.full_only:
-        made.append(build_patch(out))
-    if not args.patch_only:
-        made.append(build_full(out, args.rio_config))
-
-    for path in made:
-        count = sum(len(files) for _r, _d, files in os.walk(path))
-        print(f"已生成 {path}（{count} 个文件）")
+    models_dir = build_full(out, args.rio_config)
+    count = sum(len(files) for _r, _d, files in os.walk(models_dir))
+    print(f"已生成 {models_dir}（{count} 个文件）")
     if args.zip:
-        for path in made:
-            archive = shutil.make_archive(path, "zip", root_dir=path)
-            print(f"已压缩 {archive}（{os.path.getsize(archive) / 1024:.0f} KB）")
-    print("\n下一步：把权重拷进 vecrot-models-package 各目录 → 压缩上传网盘。")
+        archive = shutil.make_archive(os.path.join(out, "models"), "zip",
+                                      root_dir=out, base_dir="models")
+        print(f"已压缩 {archive}（{os.path.getsize(archive) / 1024:.0f} KB，"
+              "解压后得到 models/）")
+    print("\n下一步：按 models/README-模型包.md 把权重拷进各目录 → 压缩上传网盘。")
     return 0
 
 

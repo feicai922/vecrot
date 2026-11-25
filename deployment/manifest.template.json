@@ -3,6 +3,8 @@
   "schema_version": "1.0",
   "display_name": "Vecrot 本地部署",
   "repo_root": "..",
+  "models_root": "vecrot/models",
+  "_comment_models_root": "模型包放在哪。默认仓库内 vecrot/models（网盘包解压即用）；想放到别的盘就写绝对路径，D:/vecrot-models。也可用环境变量 VECROT_MODELS_ROOT 覆盖。",
   "environments": {
     "coordinator": {
       "python": "",

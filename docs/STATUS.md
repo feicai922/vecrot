@@ -421,6 +421,40 @@ python deployment/migrate_model_folders.py      # 老目录补 model.json
 deployment\envs\rio\python.exe deployment/verify_rio_runtime.py --repo … --config … --weights …
 ```
 
+## 5.3 本轮（2026-11-25）：分发路线收敛为「GitHub 代码 + 网盘模型」
+
+用户要求只有一条路：**clone 仓库，模型包解压进去，配好环境就能用**。据此收敛：
+
+### RiO-DETRv2 源码 vendored 进仓库
+
+`third_party/RiO-DETRv2/`（219 文件 / 3.2 MB）：只留 `engine/ configs/ tools/
+train.py requirements.txt LICENSE README.md`，剔除 `.git`（13 MB）、`assets/`
+（12 MB 的 README 图片视频）、`outputs/ training_logs/ pretrain/ __pycache__`、
+以及所有 `*.pth/*.pt/*.safetensors`。附 `SOURCE_MANIFEST.json`（逐文件 SHA256）
+与 `VECROT_NOTICE.md`（来源 commit `ca8ee6e`、剔除清单、本地新增的三个 gzda 配置/
+评估器、AGPL-3.0 说明）。
+
+效果：clone 完直接能跑 `rio_detr` 后端，不需要用户另外 clone 上游。
+实测用 vendored 路径 `--repo third_party/RiO-DETRv2` 跑通 10/10 项运行时检查，
+输出与用原始代码目录**完全一致**（22 框，R=0.667/P=0.909）。
+
+### 模型根目录可以放仓库外
+
+`model_registry.resolve_models_root()`：优先级 **manifest `models_root` >
+环境变量 `VECROT_MODELS_ROOT` > 默认 `<repo>/vecrot/models`**。
+`install.py` 会把 `models_root` 写进 manifest；面板/自检脚本都走同一解析，
+声明了但目录不存在时回落到默认（不静默指向空目录）。
+
+### 网盘包只保留一份
+
+`deployment/build_models_package.py` 产出**单个** `<out>/models/` + `models.zip`
+（解压即 `<models 根>`）。删掉了"增量补丁"那条线 —— 不再区分新老用户，
+旧包只需跑一次 `migrate_model_folders.py`（幂等）或直接重下。
+
+新增 `deployment/flatten_rio_config.py`：把 RiO 配置的 `__include__` 链展开成单文件，
+让模型文件夹自包含。实测展开结果与原配置**逐位等价**（同权重同瓦片，输出框一致；
+删掉训练期字段后仍然一致）。
+
 ## 6. 已验证清单
 
 `python deployment/verify.py`：

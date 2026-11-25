@@ -123,7 +123,7 @@ def main(argv=None) -> int:
     ap.add_argument("--check", action="store_true", help="只报告，不写文件")
     args = ap.parse_args(argv)
 
-    models_root = os.path.normpath(args.models_root or mr.default_models_root(REPO))
+    models_root = mr.resolve_models_root(REPO, args.models_root)
     print(f"仓库根：{REPO}\n模型根：{models_root}\n")
     if not os.path.isdir(models_root):
         print("模型根不存在；先按 docs/模型下载.md 放好 models 包。")

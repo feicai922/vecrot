@@ -22,6 +22,7 @@ import os
 from . import model_registry as _mr
 from .model_registry import (          # noqa: F401 - 供面板直接 import
     BACKEND_LABELS,
+    MODELS_ROOT_ENV,
     SPEC_FILENAME,
     ModelPreset,
     ModelSpecError,
@@ -129,6 +130,28 @@ def _manifest_candidates() -> list[str]:
     return out
 
 
+def _models_root_from_manifest() -> str | None:
+    """从候选 manifest 里读 ``models_root``（模型可以放在仓库外）。"""
+    import json
+
+    for mp in _manifest_candidates():
+        if not mp or not os.path.isfile(mp):
+            continue
+        try:
+            with open(mp, encoding="utf-8") as f:
+                m = json.load(f)
+        except (OSError, ValueError):
+            continue
+        declared = m.get("models_root")
+        if isinstance(declared, str) and declared:
+            root = m.get("repo_root") or os.path.dirname(os.path.abspath(mp))
+            path = declared if os.path.isabs(declared) else os.path.normpath(
+                os.path.join(root, declared))
+            if os.path.isdir(path):
+                return path
+    return None
+
+
 def _root_from_manifest_setting() -> str | None:
     """从候选 manifest 里读 ``repo_root``（第一个有效的胜出）。"""
     import json
@@ -152,20 +175,21 @@ def _root_from_manifest_setting() -> str | None:
 
 #: 当前使用的仓库根 / 模型根。模块 import 时先算一次，之后可 refresh。
 _REPO = _repo_root()
-_MODELS_ROOT = _mr.default_models_root(_REPO)
+_MODELS_ROOT = _mr.resolve_models_root(_REPO, _models_root_from_manifest())
 PRESETS: tuple = ()
 _BY_KEY: dict = {}
 _SKIPPED: list = []
 
 
-def _rebuild(repo_root: str | None = None, models_root: str | None = None) -> None:
+def _rebuild(repo_root: str | None = None, models_root: str | None = None,
+             declared: str | None = None) -> None:
     global _REPO, _MODELS_ROOT, PRESETS, _BY_KEY, _SKIPPED
     if repo_root:
         _REPO = os.path.normpath(repo_root)
     if models_root:
         _MODELS_ROOT = os.path.normpath(models_root)
     else:
-        _MODELS_ROOT = _mr.default_models_root(_REPO)
+        _MODELS_ROOT = _mr.resolve_models_root(_REPO, declared)
     found, dropped = _mr.scan(_MODELS_ROOT, _REPO)
     PRESETS = tuple(found) + tuple(_mr.builtin_presets(_MODELS_ROOT, _REPO))
     _BY_KEY = {p.key: p for p in PRESETS}
@@ -173,7 +197,7 @@ def _rebuild(repo_root: str | None = None, models_root: str | None = None) -> No
 
 
 def refresh_repo_root(root: str | None = None) -> str:
-    """重新解析仓库根并**重扫**模型文件夹。
+    """重新解析仓库根（含模型根）并**重扫**模型文件夹。
 
     为什么需要：模块级常量在 import 时求值，而 QGIS 插件 import 发生在
     manifest 定位之前。若 manifest 里有 repo_root（插件装在 profile 时的唯一
@@ -182,7 +206,8 @@ def refresh_repo_root(root: str | None = None) -> str:
 
     ``root`` 传了就**直接用它**，跳过自动发现。
     """
-    _rebuild(repo_root=root or _repo_root())
+    _rebuild(repo_root=root or _repo_root(),
+             declared=_models_root_from_manifest())
     return _REPO
 
 

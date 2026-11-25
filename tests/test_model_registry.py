@@ -336,37 +336,52 @@ def test_add_model_folder_tool(tmp_path, monkeypatch):
 
 
 def test_build_models_package_specs_are_valid(tmp_path):
-    """网盘包骨架里的 model.json 必须能被注册表读成合法条目（否则用户装完是空的）。"""
+    """网盘包里的 model.json 必须能被注册表读成合法条目（否则用户装完是空的）。"""
     from deployment import build_models_package as bmp
 
     out = os.path.join(str(tmp_path), "上传")
-    rc = bmp.main(["--out", out, "--patch-only"])
-    assert rc == 0
-    patch = os.path.join(out, "vecrot-models-patch")
-    keys = set()
-    for folder in os.listdir(patch):
-        spec_path = os.path.join(patch, folder, mr.SPEC_FILENAME)
-        if not os.path.isfile(spec_path):
-            continue
-        preset = mr.load_spec(os.path.join(patch, folder), REPO, patch)
-        keys.add(preset.key)
-        assert preset.spec_error == "", (preset.key, preset.spec_error)
-        # 只缺"权重还没拷进来"是正常的；声明本身不能缺字段
-        assert all("未配置" not in m for m in preset.missing()), preset.missing()
+    assert bmp.main(["--out", out, "--zip"]) == 0
+    models_dir = os.path.join(out, "models")
+    assert os.path.isfile(os.path.join(out, "models.zip")), "要能直接压出 models.zip"
+
+    presets, skipped = mr.scan(models_dir, REPO)
+    assert skipped == [], skipped
+    keys = {p.key for p in presets}
     assert {"strip_s_gzda_scene", "strip_s_gzda", "rtdetr_roof",
             "strip_s_fusion", "rio_gzda"} <= keys, keys
+    for preset in presets:
+        assert preset.spec_error == "", (preset.key, preset.spec_error)
+        # 只允许"权重还没拷进来"，声明本身不能缺字段
+        assert all("未配置" not in m for m in preset.missing()), preset.missing()
 
 
-def test_models_package_patch_matches_migration(tmp_path):
-    """网盘补丁里的声明必须与迁移脚本补出来的一致（两份不能各写一套）。"""
+def test_models_package_matches_migration(tmp_path):
+    """网盘包里的声明必须与迁移脚本补出来的一致（两份不能各写一套）。"""
     from deployment import build_models_package as bmp
     from deployment.migrate_model_folders import LEGACY
 
     out = os.path.join(str(tmp_path), "上传")
-    assert bmp.main(["--out", out, "--patch-only"]) == 0
+    assert bmp.main(["--out", out]) == 0
     for folder, spec in LEGACY.items():
-        path = os.path.join(out, "vecrot-models-patch", folder, mr.SPEC_FILENAME)
+        path = os.path.join(out, "models", folder, mr.SPEC_FILENAME)
         assert json.load(open(path, encoding="utf-8")) == spec, folder
+
+
+def test_models_root_can_be_elsewhere(tmp_path, monkeypatch):
+    """模型可以放在仓库外（环境变量 / manifest 声明），不必塞进 clone 目录。"""
+    elsewhere = os.path.join(str(tmp_path), "D盘-models")
+    os.makedirs(elsewhere)
+    make_model_folder(elsewhere, "m1", _strip_spec(key="m1"), {"best.pth": 16})
+
+    monkeypatch.setenv(mr.MODELS_ROOT_ENV, elsewhere)
+    assert mr.resolve_models_root(REPO) == os.path.normpath(elsewhere)
+
+    # manifest 显式声明优先于环境变量
+    assert mr.resolve_models_root(REPO, elsewhere) == os.path.normpath(elsewhere)
+    # 声明了但不存在的路径 → 回落到默认，不静默指向空目录
+    monkeypatch.delenv(mr.MODELS_ROOT_ENV)
+    assert mr.resolve_models_root(REPO, os.path.join(str(tmp_path), "不存在")) == \
+        mr.default_models_root(REPO)
 
 
 # ------------------------------------------------------------------ 两份镜像

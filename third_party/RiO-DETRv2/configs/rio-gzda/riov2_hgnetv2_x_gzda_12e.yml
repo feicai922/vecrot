@@ -1,0 +1,183 @@
+# RiO-DETRv2-X（最强档，64.6M）在 gzda_v3（单类 building）上微调 12 epoch
+# 从 DOTA-1.0 官方权重 tuning（-t /data1/wzh26/model_zoo/riodetrv2/riov2_hgnetv2_x_dota_1_ss.pth）
+# 关闭 DINOv3 蒸馏（本地无 dinov3 权重），其余结构与官方 X 配置一致
+__include__:
+- ../dataset/gzda_v3_offline.yml
+- ../runtime.yml
+
+output_dir: ./outputs/riov2_hgnetv2_x_gzda_12e
+checkpoint_freq: 2
+
+model: RTv4
+RTv4:
+  backbone: HGNetv2
+  encoder: HybridEncoder
+  decoder: RTDETRTransformerv2OBBFDR
+
+HGNetv2:
+  name: B5
+  return_idx: [1, 2, 3]
+  freeze_stem_only: false
+  freeze_at: -1
+  freeze_norm: false
+  pretrained: false          # 权重由 -t 载入
+  local_model_dir: ./pretrain/hgnetv2/
+
+HybridEncoder:
+  in_channels: [512, 1024, 2048]
+  version: rtdetr
+  expansion: 1
+  depth_mult: 0.67
+  hidden_dim: 384
+  dim_feedforward: 2048
+
+RTDETRTransformerv2OBBFDR:
+  feat_channels: [384, 384, 384]
+  feat_strides: [8, 16, 32]
+  hidden_dim: 384
+  num_levels: 3
+  num_layers: 4
+  num_queries: 300
+  num_denoising: 100
+  label_noise_ratio: 0.5
+  box_noise_scale: 1.0
+  learn_query_content: true
+  eval_idx: -1
+  num_points: [4, 4, 4]
+  cross_attn_method: default
+  query_select_method: default
+  query_pos_method: rio
+  anchor_aspect_ratio: 1.0
+  use_dfine_decoder_attention: false
+  layer_scale: 1
+  reg_max: 32
+  reg_scale: 8.0
+  angle_bins: 36
+  angle_fdr_mode: coarse_to_fine
+  angle_fdr_scale_factor: 1.5
+  mixed_reg_head: false
+  angle_aware_lqe: true
+
+criterion: RTv4OBBCriterion
+RTv4OBBCriterion:
+  weight_dict:
+    loss_vfl: 1
+    loss_l1: 5
+    loss_kld: 5
+    loss_fgl: 0.15
+    loss_angle_fgl: 0.15
+    loss_ddf: 1.5
+  losses: [vfl, l1, kld, local, angle_local]     # 去掉 distill
+  reg_max: 32
+  alpha: 0.75
+  gamma: 2.0
+  use_uni_set: true
+  matcher:
+    type: HungarianMatcherOBB
+    weight_dict:
+      cost_class: 2
+      cost_bbox: 0
+      cost_hausdorff: 5
+      cost_giou: 5
+    alpha: 0.25
+    gamma: 2.0
+
+postprocessor: PostProcessorOBB
+PostProcessorOBB:
+  num_top_queries: 300
+  input_shape: [800, 800]
+
+epoches: 12
+lrsheduler: flatcosine
+lr_gamma: 1
+warmup_iter: -1
+lr_warmup_scheduler: null
+flat_epoch: 8
+no_aug_epoch: 2
+clip_max_norm: 0.1
+use_amp: True
+use_ema: True
+ema:
+  type: ModelEMA
+  decay: 0.9999
+  warmups: 200
+
+optimizer:
+  type: AdamW
+  params:
+  - params: ^(?=.*backbone)(?=.*norm|bn).*$
+    lr: 3.0e-06
+    weight_decay: 0.0
+  - params: ^(?=.*(?:encoder|decoder))(?=.*(?:norm|bn)).*$
+    weight_decay: 0.0
+  lr: 3.0e-05
+  betas: [0.9, 0.999]
+  weight_decay: 0.000125
+
+train_dataloader:
+  dataset:
+    transforms:
+      ops:
+      - type: MosaicOBB
+        output_size: 800
+        rotation_range: 0
+        translation_range: [0.1, 0.1]
+        scaling_range: [0.5, 1.5]
+        probability: 1.0
+        fill_value: 0
+        use_cache: false
+        max_cached_images: 50
+        random_pop: true
+      - type: RandomPhotometricDistort
+        p: 0.5
+      - type: SanitizeBoundingBoxesOBB
+        min_size: 1
+      - type: RandomZoomOutOBB
+        fill: 0
+      - type: RandomIoUCropOBB
+        p: 0.8
+      - type: RandomHorizontalFlipOBB
+      - type: ResizeOBB
+        size: [800, 800]
+      - type: SanitizeBoundingBoxesOBB
+        min_size: 1
+      - type: ConvertPILImage
+        dtype: float32
+        scale: true
+      - type: ConvertOBB
+        normalize: true
+      policy:
+        name: stop_epoch
+        epoch: [2, 8, 10]
+        ops: [MosaicOBB, RandomPhotometricDistort, RandomZoomOutOBB, RandomIoUCropOBB]
+      mosaic_prob: 0.5
+  collate_fn:
+    base_size: 800
+    base_size_repeat: null
+    mixup_prob: 0.5
+    mixup_epochs: [2, 8]
+    stop_epoch: 8
+    ema_restart_decay: 0.9999
+  total_batch_size: 4
+  num_workers: 8
+
+val_dataloader:
+  dataset:
+    transforms:
+      ops:
+      - type: ResizeOBB
+        size: [800, 800]
+        keep_ratio: true
+        pad_to_size: true
+        fill: 0
+      - type: SanitizeBoundingBoxesOBB
+        min_size: 1.0
+      - type: ConvertPILImage
+        dtype: float32
+        scale: true
+      - type: ConvertOBB
+        normalize: true
+  total_batch_size: 16
+  num_workers: 8
+
+eval_spatial_size: [800, 800]

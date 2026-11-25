@@ -141,7 +141,9 @@ def main() -> int:
         "detector_hf": {"python": "/usr/bin/python3"},
         "detector_rio": {"python": "/usr/bin/python3"},
     }}
-    coord = Coordinator(spec, manifest, REPO)
+    # work_root 用临时目录：Coordinator 会在里面建 ledger.sqlite，别污染仓库
+    work_root = tempfile.mkdtemp(prefix="vecrot-registry-")
+    coord = Coordinator(spec, manifest, work_root)
     for profile, want in (("strip_s_gzda", "detector"),
                           ("mmrotate_obb", "detector"),
                           ("mmdet_hbb", "detector"),
@@ -151,7 +153,7 @@ def main() -> int:
         check(got == want, f"{profile} → 环境 {got}（期望 {want}）")
 
     print("\n=== 5. 本机模型文件夹 ===")
-    root = mr.default_models_root(REPO)
+    root = mr.resolve_models_root(REPO, None)
     print(f"      models 根：{root}")
     if not os.path.isdir(root):
         print("      （不存在；先按 docs/模型下载.md 放好 models 包）")

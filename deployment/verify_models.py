@@ -56,9 +56,9 @@ SOURCE_ITEMS = (
     ("third_party/Strip-R-CNN/configs/gzda/gzda_dataset.py",
      "贵州数据集注册模块", True, 1),
     ("third_party/RiO-DETRv2",
-     "RiO-DETR / RiO-DETRv2 源码（只有跑 rio_detr 才需要）", False, 1024),
+     "RiO-DETR / RiO-DETRv2 源码（随 GitHub 分发）", True, 1024),
     ("third_party/RiO-DETRv2/engine/core",
-     "RiO-DETR 模型构建入口（engine.core.YAMLConfig）", False, 1),
+     "RiO-DETR 模型构建入口（engine.core.YAMLConfig）", True, 1),
 )
 
 RENAME_HINTS = {
@@ -123,9 +123,9 @@ def report_models(models_root: str) -> tuple[int, list[str]]:
     problems: list[str] = []
     usable = 0
     if not presets:
-        print("  ✗ 一个模型都没有：models 包里缺少 model.json 声明")
-        print("    运行 python deployment/migrate_model_folders.py 补写（老目录），"
-              "或按 docs/模型下载.md 新建文件夹")
+        print("  ✗ 一个模型都没有：模型包缺少 model.json 声明")
+        print("    多半是下载了旧版 models 包：跑 python deployment/migrate_model_folders.py 补写，")
+        print("    或按 docs/模型下载.md 的『模型文件夹约定』自己建文件夹")
         problems.append("没有可用的检测模型文件夹")
     for p in presets:
         miss = p.missing()
@@ -157,7 +157,7 @@ def main(argv=None) -> int:
                          "轮廓资产与源码树始终相对仓库根检查）")
     args = ap.parse_args(argv)
 
-    models_root = os.path.normpath(args.models_root or mr.default_models_root(REPO))
+    models_root = mr.resolve_models_root(REPO, args.models_root)
     print(f"仓库根：{REPO}")
     if args.models_root:
         print("（--models-root 只影响模型文件夹扫描；轮廓资产/源码树仍按仓库根检查）")

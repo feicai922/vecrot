@@ -6,34 +6,34 @@
 
 ## 安装
 
-### 1. 下载代码和模型
+### 1. 下载代码，放好模型
 
-下载或克隆本仓库 `vecrot`，可以放在任意盘符、任意目录。
+代码全部在 GitHub，模型文件全部在网盘。**克隆仓库，再把模型包解压进去就能用**：
 
 ```powershell
 git clone https://github.com/feicai922/vecrot.git
 Set-Location .\vecrot
 ```
 
-GitHub 提供插件和定制检测源码（`third_party/Strip-R-CNN/`）；`models` 文件夹中的权重、适配器和基座文件统一从网盘下载。
-
-从 [百度网盘下载整个 models 文件夹](https://pan.baidu.com/s/1e6lr0Fk2Ud4lWQYXK58ecA?pwd=c83w)，提取码：`c83w`。将它放到仓库内的 `vecrot/` 目录，保持包内文件名和目录结构：
+从 [百度网盘下载 models.zip](https://pan.baidu.com/s/1e6lr0Fk2Ud4lWQYXK58ecA?pwd=c83w)（提取码 `c83w`），
+解压后放到仓库里的 `vecrot/models/`：
 
 ```text
-vecrot/                  # 仓库根目录
-├─ install.py
-├─ uninstall.py
-├─ backend/
-├─ third_party/Strip-R-CNN/ # GitHub 自带检测源码
-├─ third_party/RiO-DETRv2/  # 可选：跑 RiO-DETR 才需要
-├─ vecrot_qgis/
+vecrot/                     # 仓库根目录（git clone 得到）
+├─ install.py   uninstall.py
+├─ backend/     vecrot_qgis/  vecrot/lib/
+├─ third_party/Strip-R-CNN/    # 检测源码（随 GitHub）
+├─ third_party/RiO-DETRv2/     # RiO-DETR 源码（随 GitHub）
 └─ vecrot/
-   ├─ lib/
-   └─ models/            # 网盘下载的整个文件夹
-      └─ <模型文件夹>/    # 一个文件夹 = 面板上的一个可选模型
+   └─ models/                # ← models.zip 解压到这里（各子目录 = 面板上的一个模型）
 ```
 
-使用与代码同版本的 models 包，无需逐个下载模型。不要放成 `vecrot/models/models/`。
+不要放成 `vecrot/models/models/`。模型也可以放在仓库外（不想让几个 GB 的权重躺在
+clone 目录里）：
+
+```powershell
+setx VECROT_MODELS_ROOT "D:\vecrot-models"     # 或写进 deployment/manifest.json 的 models_root
+```
 
 ### 2. 建立运行环境
 
@@ -64,9 +64,10 @@ python -X utf8 install.py
 2. 在插件中选择影像和模型搭配，框选处理区域。
 3. 点击开始，完成后自动加载 `boxes.gpkg`（检测框）和 `buildings.gpkg`（建筑轮廓）。
 
-「模型搭配」下拉框的每一项对应 `vecrot/models/` 下的一个文件夹（文件夹里的 `model.json`
-声明后端、权重、配置、类别数与阈值）。**加模型只需拷贝文件夹，不用改代码**，
-例如融合数据集上重训的 Strip-R-CNN-S、或自己训的 RiO-DETRv2。
+「模型搭配」下拉框的每一项对应模型根目录下的一个文件夹（文件夹里的 `model.json`
+声明后端、权重、配置、类别数与阈值）。**加模型只需拷文件夹，不用改代码**，
+例如融合数据集上重训的 Strip-R-CNN-S、或自己训的 RiO-DETRv2：
+一条 `python deployment\add_model_folder.py` 就生成好。
 详见 [模型文件夹约定](docs/模型下载.md#模型文件夹约定重要)。
 
 默认推荐 Strip-R-CNN 场景版；也支持 RT-DETR 水平框、RiO-DETR 旋转框，

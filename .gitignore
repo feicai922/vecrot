@@ -47,3 +47,11 @@ dist/
 /third_party/Strip-R-CNN/**/*.pth
 /third_party/Strip-R-CNN/**/*.pt
 /third_party/Strip-R-CNN/**/*.safetensors
+/third_party/RiO-DETRv2/outputs/
+/third_party/RiO-DETRv2/training_logs/
+/third_party/RiO-DETRv2/pretrain/
+/third_party/RiO-DETRv2/**/*.pth
+/third_party/RiO-DETRv2/**/*.pt
+/third_party/RiO-DETRv2/**/*.safetensors
+/third_party/RiO-DETRv2/**/*.engine
+/third_party/RiO-DETRv2/**/*.onnx

@@ -1,0 +1,889 @@
+{
+  "origin": "https://github.com/RicePasteM/RiO-DETRv2",
+  "snapshot": "Local snapshot at upstream commit ca8ee6e (Update inference script and tighten README wording)",
+  "scope": "Runtime source subset: engine, configs (including local gzda/riozd configs), tools, train.py, requirements and license; no weights, no README media, no training outputs",
+  "license": "AGPL-3.0 (see LICENSE in this directory)",
+  "notes": [
+    "configs/dataset/gzda_v3_offline.yml and configs/rio-gzda/*.yml are Vecrot-local training configs, not upstream files.",
+    "engine/data/dataset/gzda_obb_eval.py is a Vecrot-local evaluator shim (upstream has no GzdaObbEvaluator).",
+    "Network weights are not included; see docs/模型下载.md."
+  ],
+  "files": [
+    {
+      "file": ".gitignore",
+      "sha256": "db7b0abd015a472794994565c383811c079bd45adc9b52abcd32b6fb38e0863a"
+    },
+    {
+      "file": "LICENSE",
+      "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+    },
+    {
+      "file": "README.md",
+      "sha256": "d3e0a7303ee248cfafac5a1726c23fcd6c6e2467950b25b91d5f27a9829eb9f1"
+    },
+    {
+      "file": "requirements.txt",
+      "sha256": "fc1f265a3c9fd449132a3b6e12fb9918d137a134b0ddc480a180b85b8c4c55fa"
+    },
+    {
+      "file": "train.py",
+      "sha256": "9cbf8eec90d73d7ce02682280353e42db8a6ccaa22ad070b3010e5bd713d684a"
+    },
+    {
+      "file": "configs/runtime.yml",
+      "sha256": "4fd46899805a37b89c6d003c66afff30c507eca2cfc1b64aebf7eb9caf8ae0c7"
+    },
+    {
+      "file": "configs/base/dataloader.yml",
+      "sha256": "ec630ef6f8f7ef86fa0cb2054460f2c77baa49201ae8a7bb4d22e7abdf7b75cc"
+    },
+    {
+      "file": "configs/base/deim.yml",
+      "sha256": "04fb0e938703771aa632e519048ba9678125b2ea5cb84ad24968ae1e1721ef4d"
+    },
+    {
+      "file": "configs/base/dfine_hgnetv2.yml",
+      "sha256": "8d3e5abfaa2b629ebac8fc3aeb347ca1c8fd52a8199413b609a4dea6a9e0128f"
+    },
+    {
+      "file": "configs/base/optimizer.yml",
+      "sha256": "32419ad558dc024a06f0fd88456928dd4ba1c060f2c4308497c020a02fcf75e0"
+    },
+    {
+      "file": "configs/base/rtv2_deim.yml",
+      "sha256": "d19c7d9e5705221ce4c153247965295a4e02a36f6d8c650a33d315a4f0a81eca"
+    },
+    {
+      "file": "configs/base/rtv2_optimizer.yml",
+      "sha256": "06ccf959ab281f6fd1994253132cd947f4d9dddf8ff9a3b4839384ee1db72617"
+    },
+    {
+      "file": "configs/base/rtv2_r50vd.yml",
+      "sha256": "daabb8186a5e51b1311d4f3a431cd6165c35cebc353ba8b49f31960131159c96"
+    },
+    {
+      "file": "configs/base/rtv4.yml",
+      "sha256": "c8bd9eaaf7062722e6ed4fdeb07e5f88fd7e48414323c149c7e8ad78445242b0"
+    },
+    {
+      "file": "configs/dataset/aitodr_detection.yml",
+      "sha256": "1a3da7420f38215dc0013087252ff6a957c3a16d86d6a1a225b02836347be6a7"
+    },
+    {
+      "file": "configs/dataset/coco_detection.yml",
+      "sha256": "7b33edf98138d09082a5e7ba4d229ef08bbb096a86a798b7c16177fa44df741c"
+    },
+    {
+      "file": "configs/dataset/crowdhuman_detection.yml",
+      "sha256": "b687c493b7561b2424d1eaa6986030ac32c63fd5259d008339cc67a6b95790b7"
+    },
+    {
+      "file": "configs/dataset/custom_detection.yml",
+      "sha256": "c038a29d399820eda329ff1ff0d7994cb4a7521e1591c5a3bd1028a29baebeea"
+    },
+    {
+      "file": "configs/dataset/dior_detection.yml",
+      "sha256": "261db0cd8b19fdbe6d561b996ede95c85997bf09417341cc93144fb753949c88"
+    },
+    {
+      "file": "configs/dataset/dota_1_ms_detection.yml",
+      "sha256": "af0053839fe2905eb77b76974381c283355fa131f5ef7f130a43dfa070d1d931"
+    },
+    {
+      "file": "configs/dataset/dota_1_ms_detection_offline.yml",
+      "sha256": "521e8fc9a5c32a5af0445d1e2b754d9f0e29b4089020a42a2a0f9940832cb317"
+    },
+    {
+      "file": "configs/dataset/dota_1_ss_detection.yml",
+      "sha256": "538d5a6576ba92c46a743a4dae2b83275474539bcffc683e901cb59598038a6f"
+    },
+    {
+      "file": "configs/dataset/dota_1_ss_detection_offline.yml",
+      "sha256": "00dfd93116c61075d336c9405794140036b973387a20375394a5d1cfc2f34227"
+    },
+    {
+      "file": "configs/dataset/fair1m_2_ms_detection.yml",
+      "sha256": "4c52e4f7aba365c23cca949c59d0221de594fafcd7698360410c5f5ed94245d8"
+    },
+    {
+      "file": "configs/dataset/gzda_v3_offline.yml",
+      "sha256": "30f478b3ac7b8542a41ef72af361056c6b4a542dc6a4413d53240389ee88dd5c"
+    },
+    {
+      "file": "configs/dataset/hrsc2016_detection.yml",
+      "sha256": "9f36651badbfcd82b013ab0ba5637c5ef6ee7b30d4fb1af6eaf004888db3ee41"
+    },
+    {
+      "file": "configs/dataset/obj365_detection.yml",
+      "sha256": "c2767a1e8a69b5ddd500ec150eeca0c84b6f0b9f8e4ac7e4160b6b9732990371"
+    },
+    {
+      "file": "configs/dataset/voc_detection.yml",
+      "sha256": "92eb4e855896329bd08d2ff329ed2ae3e05c8f8a543eec090fd12964427673a0"
+    },
+    {
+      "file": "configs/deim/deim_hgnetv2_l_coco.yml",
+      "sha256": "b18ebe6392710f04ec502655e8bf9a43f7dfe9aebeee12dd78edca00dc2f0ce9"
+    },
+    {
+      "file": "configs/deim/deim_hgnetv2_m_coco.yml",
+      "sha256": "b7f3dc64289e2e498112bfe4bea028861833c453b4cd7580020ccb037275898e"
+    },
+    {
+      "file": "configs/deim/deim_hgnetv2_n_coco.yml",
+      "sha256": "0dbc2a0dc96d60bc198d70a574374e6223371ab84a10165da70ab0b3f54bd5df"
+    },
+    {
+      "file": "configs/deim/deim_hgnetv2_s_coco.yml",
+      "sha256": "2d494a5cdf9cfcaa3512582288bf391cdea5b0682c8a0af90c3eac4f09088f10"
+    },
+    {
+      "file": "configs/deim/deim_hgnetv2_x_coco.yml",
+      "sha256": "dcc58f1873892e7eb0a187500d6007c0c44d86f6654bfab87d8711cce3934faf"
+    },
+    {
+      "file": "configs/deim/deim_rtv2_r101vd_60e_coco.yml",
+      "sha256": "d04514587a039cd417a7f1d55c2df33aab339903057c29d93089cb19bf6f8d98"
+    },
+    {
+      "file": "configs/deim/deim_rtv2_r18vd_120e_coco.yml",
+      "sha256": "7a20440d1e4cc318b54bd95b5d7e67446d6342f5a0d16052fdcd4202c2ed6928"
+    },
+    {
+      "file": "configs/deim/deim_rtv2_r34vd_120e_coco.yml",
+      "sha256": "d274bf0b988bd24e445bb59cb7bef120ff93879701cca30ab91240e8015d9c73"
+    },
+    {
+      "file": "configs/deim/deim_rtv2_r50vd_60e_coco.yml",
+      "sha256": "b3d2d6392f82a96612696a39ebc9c87bba0572167afc2ef251d2f9dfa0ec2cca"
+    },
+    {
+      "file": "configs/deim/deim_rtv2_r50vd_m_60e_coco.yml",
+      "sha256": "42a15dfe0e0679e96ee3f78b2c5e2223e3e0c834d3cbbbbf69cdde5aea50e5aa"
+    },
+    {
+      "file": "configs/deim/object365/deim_hgnetv2_x_obj2coco_24e.yml",
+      "sha256": "5f96dc0b5c447d756c868aa9c83e44407b6f4feaa9fa613072662b6c586330a5"
+    },
+    {
+      "file": "configs/dfine/dfine_hgnetv2_l_coco.yml",
+      "sha256": "9b4147af1326a775f085205bc2f7c56e05a1eb349b8a87cbfd8b946053675dee"
+    },
+    {
+      "file": "configs/dfine/dfine_hgnetv2_m_coco.yml",
+      "sha256": "e386f2f9f9a14c7518330f1c4501beb31e4354230d6b93cc46577210a3254816"
+    },
+    {
+      "file": "configs/dfine/dfine_hgnetv2_n_coco.yml",
+      "sha256": "4ea969798c42bd440309832bb05462803a30ae4a15948e5d45f2c9c357b0966a"
+    },
+    {
+      "file": "configs/dfine/dfine_hgnetv2_s_coco.yml",
+      "sha256": "0af3a1218ba75982343587b774b5727249a4756c460f196b0a995195c8c5d5f8"
+    },
+    {
+      "file": "configs/dfine/dfine_hgnetv2_x_coco.yml",
+      "sha256": "db78a8b9f3d90c991c4774f19a9f6b9badbfdab50f8316e4468469a5a8684ca5"
+    },
+    {
+      "file": "configs/dfine/object365/dfine_hgnetv2_x_obj2coco.yml",
+      "sha256": "60a1c00d69baeedd95e35c1fb5d2f9866655a858b542e200fcc66068f7640f6d"
+    },
+    {
+      "file": "configs/rio-aitodr/riov2_hgnetv2_m_aitodr.yml",
+      "sha256": "e417d74b32feb8c76139a2717980f455214ef88452a5f9bc750c55be6238d081"
+    },
+    {
+      "file": "configs/rio-aitodr/riov2_hgnetv2_x_aitodr.yml",
+      "sha256": "64991f67723689982f8f02790cfc24342e72369b07233c3adcf6117d036e3cde"
+    },
+    {
+      "file": "configs/rio-aitodr/riov2_hgnetv2_x_aitodr_ap5095.yml",
+      "sha256": "c07e45a503ccd1b7798222faa96a840ff4fc020a7d41d0030ef75eec79c92c89"
+    },
+    {
+      "file": "configs/rio-diorr/rio_hgnetv2_l_diorr.yml",
+      "sha256": "6a7cdce28e1ac13c65846f6af8ded81ff20d9b2cab6fd1801e508909cf63fa83"
+    },
+    {
+      "file": "configs/rio-diorr/rio_hgnetv2_m_diorr.yml",
+      "sha256": "04f00cf5e177a71b412137a178507b3706024be423cca9542cadf3b5b59d0c1a"
+    },
+    {
+      "file": "configs/rio-diorr/rio_hgnetv2_n_diorr.yml",
+      "sha256": "269b9a71276afa5a92908f26e57336afa098336ade3d1725325828e7599911ec"
+    },
+    {
+      "file": "configs/rio-diorr/rio_hgnetv2_s_diorr.yml",
+      "sha256": "9d4d7fbadad247a89b78b15819049ec02511eb5b37bf745e331b184f662ba869"
+    },
+    {
+      "file": "configs/rio-diorr/rio_hgnetv2_x_diorr.yml",
+      "sha256": "c7e2ecb72743e03588982449a61bcff97700f7e7eb3d639b68405a929085482b"
+    },
+    {
+      "file": "configs/rio-diorr/riov2_hgnetv2_l_diorr.yml",
+      "sha256": "72dbcce51dacc597b1c08090e63d3b081b447b19f0fb0d33270aeb28e9069680"
+    },
+    {
+      "file": "configs/rio-diorr/riov2_hgnetv2_m_diorr.yml",
+      "sha256": "7ce0000bcc677505342b7aa928a24031daddd25a654fa4d542ab4ead3e9d6e2a"
+    },
+    {
+      "file": "configs/rio-diorr/riov2_hgnetv2_n_diorr.yml",
+      "sha256": "3cd71884bbbbf913dfa0be0a1d8f88c3de376e7b3cb5f92295e37be7ccbc28aa"
+    },
+    {
+      "file": "configs/rio-diorr/riov2_hgnetv2_s_diorr.yml",
+      "sha256": "105237bf7fa3c234908485f4e89e7217b7feeca2efec8340696a4d4ee0fa8540"
+    },
+    {
+      "file": "configs/rio-diorr/riov2_hgnetv2_x_diorr.yml",
+      "sha256": "9fc566a53e39c577becff67891d1632c059a25bd4011cdfd734f00c00f41f7c0"
+    },
+    {
+      "file": "configs/rio-dota_1_ms/rio_hgnetv2_m_dota_1.yml",
+      "sha256": "9073b9ff8a23959691f3ea2f79b320017b2b0fe9d0e830b511b95f9718b35d60"
+    },
+    {
+      "file": "configs/rio-dota_1_ms/rio_hgnetv2_x_dota_1.yml",
+      "sha256": "96aa7b0cc3e35438af43a71b6c8fad1ac4bd858433ba6dc5ab4d379ecc5ecac1"
+    },
+    {
+      "file": "configs/rio-dota_1_ms/riov2_hgnetv2_m_dota_1.yml",
+      "sha256": "ade23c34f5f76a747d12b576620a6873efcded8028c3b6d0a5e730cc04601f5b"
+    },
+    {
+      "file": "configs/rio-dota_1_ms/riov2_hgnetv2_x_dota_1.yml",
+      "sha256": "dc8ef1fc55d21aa84b88f70da9f8576f9bf98aade7f5e038c523612e8ba6fc66"
+    },
+    {
+      "file": "configs/rio-dota_1_ss/rio_hgnetv2_l_dota_1.yml",
+      "sha256": "8c4600f6a5fdaf23f6e73f5f8156ff9b6613fdc7e9c7d4d27825be86dfc4389f"
+    },
+    {
+      "file": "configs/rio-dota_1_ss/rio_hgnetv2_m_dota_1.yml",
+      "sha256": "976a5681e898be57aba169abf2912dc9005d90b012f93a726c1760e8944d2001"
+    },
+    {
+      "file": "configs/rio-dota_1_ss/rio_hgnetv2_n_dota_1.yml",
+      "sha256": "0550e39f3c3a1b44a133181a748748c5d03085865d5dd3094443de2065d6140c"
+    },
+    {
+      "file": "configs/rio-dota_1_ss/rio_hgnetv2_s_dota_1.yml",
+      "sha256": "967a72a0552315b4f6db476ddd4aae0d611029a147363606d23a66e2be52d5c2"
+    },
+    {
+      "file": "configs/rio-dota_1_ss/rio_hgnetv2_s_dota_1_fdr.yml",
+      "sha256": "ad3241b32880b47d6daff5215e30da874e963c5987644af2b655194cc45cdd89"
+    },
+    {
+      "file": "configs/rio-dota_1_ss/rio_hgnetv2_x_dota_1.yml",
+      "sha256": "9dbe1b9293cc81d9262abe796cb45ffb39757bf8474e0e290da7dd5a40d473d4"
+    },
+    {
+      "file": "configs/rio-dota_1_ss/riov2_hgnetv2_l_dota_1.yml",
+      "sha256": "274ef16b00334944475afe80770f06e2d8cfa82b223773b02f6dbff8d928b9d9"
+    },
+    {
+      "file": "configs/rio-dota_1_ss/riov2_hgnetv2_m_dota_1.yml",
+      "sha256": "ca7819caf26ee23be416df3b70e0f424133d529df3fd4e7fa15d4679e7d76489"
+    },
+    {
+      "file": "configs/rio-dota_1_ss/riov2_hgnetv2_n_dota_1.yml",
+      "sha256": "4a278098b7ac44cda0f3f6a97d78612fff1139d9cfd1e785525286871ff45cfb"
+    },
+    {
+      "file": "configs/rio-dota_1_ss/riov2_hgnetv2_s_dota_1.yml",
+      "sha256": "1b146bdc5c50b0de415f7daf681cb5f4661e9f38a74d05634bf1d0bc3c9b03f2"
+    },
+    {
+      "file": "configs/rio-dota_1_ss/riov2_hgnetv2_x_dota_1.yml",
+      "sha256": "35ce283760309535620f3534fc196220ecd24fbbd2dda252cf623cc6723d7576"
+    },
+    {
+      "file": "configs/rio-fair1m_ms/rio_hgnetv2_m_fair_2.yml",
+      "sha256": "30912e98e791daf610cfd90fb79a468074f0a0eda57609ed1fffc1225e1001c8"
+    },
+    {
+      "file": "configs/rio-fair1m_ms/rio_hgnetv2_x_fair_2.yml",
+      "sha256": "3265b88b524121de2f800941a60b0030817768ab631dd02c7f68daa78362b8ee"
+    },
+    {
+      "file": "configs/rio-fair1m_ms/riov2_hgnetv2_m_fair_2.yml",
+      "sha256": "3be248389de5e577e4bb127c88dc7e7e4f83280c89c5421aa177ca0c5e3d0d52"
+    },
+    {
+      "file": "configs/rio-fair1m_ms/riov2_hgnetv2_x_fair_2.yml",
+      "sha256": "e726c7ebf88b0399d466006d99bd1c490a90402f092d4d6e41690859bc6905c4"
+    },
+    {
+      "file": "configs/rio-gzda/riov2_hgnetv2_x_gzda_12e.yml",
+      "sha256": "6b50f6438df2ff7c7254eb4f9c3fb6db80bd2a8ec6649507c51c14b7406c268c"
+    },
+    {
+      "file": "configs/rtv2/rtv2_r101vd_6x_coco.yml",
+      "sha256": "3900e7b204b582324a3663b8641144e4fbcde48a6aaa36236f5995d48f02c419"
+    },
+    {
+      "file": "configs/rtv2/rtv2_r18vd_120e_coco.yml",
+      "sha256": "4139358e691d479bc777f77fc7e71837d6b8ff8034580f56da7efd5b9ff59ca0"
+    },
+    {
+      "file": "configs/rtv2/rtv2_r34vd_120e_coco.yml",
+      "sha256": "b2b121de336f6461797bf4f1fb096e57e2609617ad5d2e56a7a409e41ea6868b"
+    },
+    {
+      "file": "configs/rtv2/rtv2_r50vd_6x_coco.yml",
+      "sha256": "3955a55ffb9a4777e4a6ca8fcc815d6ba8dff5ea57d4cce4c9be2f9843b84ab4"
+    },
+    {
+      "file": "configs/rtv2/rtv2_r50vd_m_7x_coco.yml",
+      "sha256": "9bfd3d8019a5632861f911dbd513e96020bf3c5a7795a2d6afcf54ce35699cb8"
+    },
+    {
+      "file": "configs/rtv4/rtv4_hgnetv2_l_coco.yml",
+      "sha256": "d8d36cf06dfd02873d0741df9a5af1d27cec188d7e5ec35d2d588f885e8f9518"
+    },
+    {
+      "file": "configs/rtv4/rtv4_hgnetv2_m_coco.yml",
+      "sha256": "d5622bb57a44df548be64a98a1271cd3522301ad07f81a384bb20bc22522a514"
+    },
+    {
+      "file": "configs/rtv4/rtv4_hgnetv2_s_coco.yml",
+      "sha256": "45cf2abdc91e2a83b2d759b7c49526880d12a70ee44c8cdd8674dd604985bbe0"
+    },
+    {
+      "file": "configs/rtv4/rtv4_hgnetv2_x_coco.yml",
+      "sha256": "ed5e67e6ab030e06904110284096888099cf029d56145ce86307c5449bac41df"
+    },
+    {
+      "file": "engine/__init__.py",
+      "sha256": "566b37c753a78b5d97fcd5fe1fc1c346c5fb0003c428abc9be03e4b96e6f5084"
+    },
+    {
+      "file": "engine/backbone/__init__.py",
+      "sha256": "2b8d9d93192e4c68ef85bb53daf6d4b10eabbd25bafdf09b17f9abc35fb4d6cf"
+    },
+    {
+      "file": "engine/backbone/common.py",
+      "sha256": "3c99326a2b84e3f7b1a08a56651dbb97d012e63513df06d4e173758f82e35002"
+    },
+    {
+      "file": "engine/backbone/csp_darknet.py",
+      "sha256": "15d680dbe082c76a867b4c6ead90d77a6e5a92a094b8630e7da3c9c99090b81b"
+    },
+    {
+      "file": "engine/backbone/csp_resnet.py",
+      "sha256": "399b1e3a7c9afd9c00f914c938f51c08ee1dcf09a5cd5ab52b38e311e7dfda07"
+    },
+    {
+      "file": "engine/backbone/dinov3_adapter.py",
+      "sha256": "caa26a3d11609d1f80df4a409f1142913e6c17286c9e73be6b69533585e0c251"
+    },
+    {
+      "file": "engine/backbone/hgnetv2.py",
+      "sha256": "a2346706ef2482e8b8f7011ed86cca9fdbce140881d066c617695c2af62e15cf"
+    },
+    {
+      "file": "engine/backbone/lsknet.py",
+      "sha256": "a7dd63066258602787ba74f29d532df4d69febdb89037b29feadb7837bba1a4d"
+    },
+    {
+      "file": "engine/backbone/presnet.py",
+      "sha256": "54fb81ab7bece7a63c2a46677036f7b1a44645e328ff673b3221063b70d84445"
+    },
+    {
+      "file": "engine/backbone/test_resnet.py",
+      "sha256": "f48a7fa9e7648495c838688eaba9656e555397b2897d776b34359b44cfd10481"
+    },
+    {
+      "file": "engine/backbone/timm_model.py",
+      "sha256": "9150e33f61affd8ee9b94e73cdbcc5ae3c6de3b902e1a38752b46139ea8609b3"
+    },
+    {
+      "file": "engine/backbone/torchvision_model.py",
+      "sha256": "6e0d2a9231aa5214ce5c206b8b388a41dbfc6221abf6f65d1cf3e97bb16cd41a"
+    },
+    {
+      "file": "engine/backbone/utils.py",
+      "sha256": "e2bcc909a479a7ce06f77a0093e656e2e3da531f745dc6791e8fc76037a69ad5"
+    },
+    {
+      "file": "engine/backbone/vit_tiny.py",
+      "sha256": "868f820b08e8ee1805b52fdfdf27e56377a837939ca69df083f6a6e531189c55"
+    },
+    {
+      "file": "engine/backbone/dinov3/__init__.py",
+      "sha256": "45f908baeccb3160208f428bcbe01f98405be5d3ff7c5be45b4a077a5755902c"
+    },
+    {
+      "file": "engine/backbone/dinov3/vision_transformer.py",
+      "sha256": "45c90d290990c3936979bef29b468a1c63a1f29a8d95d0b6d56e6382b35343fe"
+    },
+    {
+      "file": "engine/backbone/dinov3/layers/__init__.py",
+      "sha256": "7bcf3a86cd89ce914e5a53e1f1b806e8974ec58394ef3ab0a80266902d435649"
+    },
+    {
+      "file": "engine/backbone/dinov3/layers/attention.py",
+      "sha256": "5a83deecd7758891770f5751e319a882b500bd4668cb467af9045927c7c0b411"
+    },
+    {
+      "file": "engine/backbone/dinov3/layers/block.py",
+      "sha256": "9ab2e4d6b67d942dafdcdf823d536e84a5188da63b86adaccaa32cd421fa532e"
+    },
+    {
+      "file": "engine/backbone/dinov3/layers/dino_head.py",
+      "sha256": "339170c86f7c14ba7aece5f9adb9e85e9d26728adffe7820d0af554f5d6c3177"
+    },
+    {
+      "file": "engine/backbone/dinov3/layers/ffn_layers.py",
+      "sha256": "d9ed0235312c91f59338e56a25c0d69a4cdcf2dcef40a7186c64c71c0f175f3f"
+    },
+    {
+      "file": "engine/backbone/dinov3/layers/fp8_linear.py",
+      "sha256": "b646441c34fd29d31ace9d38c513bceb530c751908d7030aa1316d16646638e9"
+    },
+    {
+      "file": "engine/backbone/dinov3/layers/layer_scale.py",
+      "sha256": "3664bdc1b352a6f7ef2e5b23ba0b10f52e9e29ef843a14d88f94bdb3cab60677"
+    },
+    {
+      "file": "engine/backbone/dinov3/layers/patch_embed.py",
+      "sha256": "99580d6a923735d6bb8ace80273ab0fd9bcaba94d5de639bce09276455f33dc8"
+    },
+    {
+      "file": "engine/backbone/dinov3/layers/rms_norm.py",
+      "sha256": "25ea57d63b831907b0e5d23ade67077f222c9318043d28ee72c2a5b672b456ab"
+    },
+    {
+      "file": "engine/backbone/dinov3/layers/rope_position_encoding.py",
+      "sha256": "03c5bac3c5209bdb8ab1735fae9ad38a41466ffd3d3913935122ddce23017a11"
+    },
+    {
+      "file": "engine/backbone/dinov3/layers/sparse_linear.py",
+      "sha256": "36b5e484627d107fe349e01cc68b5a363dacf56666b30d93d724db746c33f906"
+    },
+    {
+      "file": "engine/backbone/dinov3/utils/__init__.py",
+      "sha256": "c1cba5d05eb1d1c9109402f7f7f5802fd602e8ca37aabb7904d5915ddf0ae291"
+    },
+    {
+      "file": "engine/backbone/dinov3/utils/cluster.py",
+      "sha256": "2ade52740fce9828695215a12b0a351d370d697b9d6bd7e41e45807db6ee2db0"
+    },
+    {
+      "file": "engine/backbone/dinov3/utils/custom_callable.py",
+      "sha256": "f80a13d5a454bb66b978584b785a72a252d57f572b3cc18db06cd774d87ad8a8"
+    },
+    {
+      "file": "engine/backbone/dinov3/utils/dtype.py",
+      "sha256": "3a27ff24cd5b8a18d3372c4909be6ab755168ed2e4cfb9a5e1977b9b9cfbbc43"
+    },
+    {
+      "file": "engine/backbone/dinov3/utils/utils.py",
+      "sha256": "0b4b0393b559c48652af1cf52ef1d7229865f1dc06759af0e4bb31796f666205"
+    },
+    {
+      "file": "engine/core/__init__.py",
+      "sha256": "b20b7267f86929d2ba3f59e494e5a5fe56e24ca2a1967cdebeaab905f3cd2475"
+    },
+    {
+      "file": "engine/core/_config.py",
+      "sha256": "2bec5c7bec7c93eaa48780acb1ff79a06fc987e275645777557cddceda120c7b"
+    },
+    {
+      "file": "engine/core/workspace.py",
+      "sha256": "8d0522e4062f195c60d5ae3593df62dc117a58d7bc0cef8bda3fefa0aa2121f5"
+    },
+    {
+      "file": "engine/core/yaml_config.py",
+      "sha256": "738118da786211076c1d2f0c70f399c11bc0948b98a39263301fab6832d689d8"
+    },
+    {
+      "file": "engine/core/yaml_utils.py",
+      "sha256": "bbb88010c0e48beeea5be3a063d1ed3e058eee584f7a9923f077384f0e5dbcda"
+    },
+    {
+      "file": "engine/data/__init__.py",
+      "sha256": "1447ad3d87999b1c9760224b35209ae6db02a9ace8a605f612877e2bcb97761f"
+    },
+    {
+      "file": "engine/data/_misc.py",
+      "sha256": "85099a5b66d4496575d31a4e3a73dffea3ddfef34a60f43d3e4569b66809703a"
+    },
+    {
+      "file": "engine/data/dataloader.py",
+      "sha256": "f86a12bf47c2b818e728bfa572c934bc3485060a4a30f8e8fec4a4b5e971862c"
+    },
+    {
+      "file": "engine/data/dataset/__init__.py",
+      "sha256": "3fd347efb0dc07a5ba4e1c86446599be90c2b59f7bf7e5ba63a045bc9b4f8909"
+    },
+    {
+      "file": "engine/data/dataset/_dataset.py",
+      "sha256": "f37c4745f85fe6d2f12dd1759e742086c043b84c752d24b8be67ed4e489efd5a"
+    },
+    {
+      "file": "engine/data/dataset/aitod_dataset.py",
+      "sha256": "d2e7a6fb528d41ee6134d654712a603a887357cf5cce404187fec4ca7a652cce"
+    },
+    {
+      "file": "engine/data/dataset/aitodr_evaluator.py",
+      "sha256": "d88ef7658ae690718194902c9f8cd67cb5b6a8e82ae172c94d2b900218dbddd8"
+    },
+    {
+      "file": "engine/data/dataset/coco_dataset.py",
+      "sha256": "8ff24c73a6fdaa453520aa6cd50148b06c359898d52e49a1a2d2cc1327509e17"
+    },
+    {
+      "file": "engine/data/dataset/coco_eval.py",
+      "sha256": "117b760f22984cfbb70ff166ce113add3f4d7c49462abefd591f85cedd8c1be8"
+    },
+    {
+      "file": "engine/data/dataset/coco_utils.py",
+      "sha256": "a1d1d572fbe3fa3aa251faebf9e669acb5494c233b1ca4bf63b154f4e52e23c4"
+    },
+    {
+      "file": "engine/data/dataset/dior_dataset.py",
+      "sha256": "f97cf99bb5430170adc0d4bc9c3d9c44455f4d09e85a960de6dd0467d77823bc"
+    },
+    {
+      "file": "engine/data/dataset/dota_auto_evaluator.py",
+      "sha256": "8d0c1fa6a535eee9e046153446a9b4c9a24a16f51d907165772924b2a431aacd"
+    },
+    {
+      "file": "engine/data/dataset/dota_dataset.py",
+      "sha256": "c4162ef2c819e8ff7d83f22501ec7b123ae576ca3f47c6e4da641a21434b3bb3"
+    },
+    {
+      "file": "engine/data/dataset/dota_evaluator.py",
+      "sha256": "5f050005a2be7f5cee6d2e582396ad75ed0d2f2f1cf8fcd3c5f6850327ffc634"
+    },
+    {
+      "file": "engine/data/dataset/dota_gzda.py",
+      "sha256": "bbb4e4dbb4b7ef0ff616f68ae1185c2df4d53c22f93580535beca4b8636d00fa"
+    },
+    {
+      "file": "engine/data/dataset/fair1m_dataset.py",
+      "sha256": "e8ec1f12c65804f7368572df6afd094cff8b87ab0eec22ce2f1a97d88951d31a"
+    },
+    {
+      "file": "engine/data/dataset/gzda_obb_eval.py",
+      "sha256": "b811739a47523f4e5973afb8308b4e414a7043d395d370c7498f22c6dba378d5"
+    },
+    {
+      "file": "engine/data/dataset/hrsc_dataset.py",
+      "sha256": "c0c5ceeb1db03c333095b15ee6fd1e9672a6535ba991b0c061bf511745c248a8"
+    },
+    {
+      "file": "engine/data/dataset/hrsc_evaluator.py",
+      "sha256": "3001a6d612ff78ca4d45f9eb8fb5f98be3383fd2264dba7d5a90204587e6b019"
+    },
+    {
+      "file": "engine/data/dataset/mmeval.py",
+      "sha256": "7d104154591a8e95f5cc876f64c1abb05d96a83d6595bea15550f6c27848cc50"
+    },
+    {
+      "file": "engine/data/dataset/voc_detection.py",
+      "sha256": "0d3dd4be481d5931c203eec95217cd5d79a477f53da228c5917ba7044e5ccf8e"
+    },
+    {
+      "file": "engine/data/dataset/voc_eval.py",
+      "sha256": "71ce94eaa171228011f258384f67f5d69216579fbd60587e4c6cd191d2df3c1f"
+    },
+    {
+      "file": "engine/data/transforms/__init__.py",
+      "sha256": "427539534dabd9fa1cd9a54b689b01dc4b2e572abac90781718593fd5e482e40"
+    },
+    {
+      "file": "engine/data/transforms/_transforms.py",
+      "sha256": "322b605090aab5fe411de44b3108fa70e8499da19c216da40a4ed891b53fb670"
+    },
+    {
+      "file": "engine/data/transforms/container.py",
+      "sha256": "542c4b24c7ab720603200e51df99df710309ccc1e87bdd7aeb9eb64a1b284345"
+    },
+    {
+      "file": "engine/data/transforms/functional.py",
+      "sha256": "b68e508a54340342a5ffe7c12ffa4cb52bc5c0881a69d4111f44ef968518438b"
+    },
+    {
+      "file": "engine/data/transforms/mosaic.py",
+      "sha256": "954e216ea7e8d7afd875831b55935b7c55825461a9df12a7e10c3b1a5957aa7d"
+    },
+    {
+      "file": "engine/data/transforms/mosaic_obb.py",
+      "sha256": "d689341f1e2a91e52dff66cc958cfae7fe58714701016773e6f2095a358b2701"
+    },
+    {
+      "file": "engine/data/transforms/transforms_obb.py",
+      "sha256": "833fe4891e79bede8663dbdf4b5f45f4d6cb585ae108a22529af6ff5eb1182e6"
+    },
+    {
+      "file": "engine/misc/__init__.py",
+      "sha256": "1409a522e890456a3e9047d36d23ec05f5a96e9ce60bf2aba8d569e20a279ecd"
+    },
+    {
+      "file": "engine/misc/box_ops.py",
+      "sha256": "507f491779819e8bbab76039d423a6f63f3498d3dde7ffcb0edaf798669fb3fa"
+    },
+    {
+      "file": "engine/misc/dist_utils.py",
+      "sha256": "c916748af7b29933a6dca951595be56995c634b2429e1f57f3a1caea6e29621b"
+    },
+    {
+      "file": "engine/misc/lazy_loader.py",
+      "sha256": "103e433b2d9f11c50f63da1f01915a383b6bcf99bcb9657f773bf9f8fde9b045"
+    },
+    {
+      "file": "engine/misc/logger.py",
+      "sha256": "c9d66368341d0006a0147817cc850e22146c16a2fd375a7954ae9781a8ffd4f8"
+    },
+    {
+      "file": "engine/misc/profiler_utils.py",
+      "sha256": "3e4c8355a7457f474f9f7e36af2c65ce9e878e7233d2becafe893fe29764ae7c"
+    },
+    {
+      "file": "engine/misc/vis_obb.py",
+      "sha256": "3b2057ff6735fbfde57ea1fe3b1410bee809ccf08cc6bb967593472b3f661427"
+    },
+    {
+      "file": "engine/misc/visualizer.py",
+      "sha256": "db3e1c6b23a3a7d8186c7786354b161859a4d00db60991a1e405f6eb484572d0"
+    },
+    {
+      "file": "engine/optim/__init__.py",
+      "sha256": "873f91c02a22f14912420e03d53e90919cc8f9324f6d2166b6e919f80764ccef"
+    },
+    {
+      "file": "engine/optim/amp.py",
+      "sha256": "6e11a55bca958224d062d6a11518aee62787b1018727d94a152428752c3e91cf"
+    },
+    {
+      "file": "engine/optim/ema.py",
+      "sha256": "bdd8ab69529b086f4ff4f229328a79e2153cbf6bda1c09fd015d7cb447bf208a"
+    },
+    {
+      "file": "engine/optim/lr_scheduler.py",
+      "sha256": "e02199d51be78a434771ff51ce4d22f11f7c83756d62f3104263568206a15374"
+    },
+    {
+      "file": "engine/optim/optim.py",
+      "sha256": "4395e1fd941f13bec06b95732bb446df7d10256e74fd494a49511090bbc20cd0"
+    },
+    {
+      "file": "engine/optim/warmup.py",
+      "sha256": "ff80c9b762be57af4abd0a6a843d5d50bbc4887db19d85cb74887615d7ea7432"
+    },
+    {
+      "file": "engine/rtv4/__init__.py",
+      "sha256": "834a66ca7791af3012c95fbeb08919b606431c8970c8792d558557ac37f0d9e1"
+    },
+    {
+      "file": "engine/rtv4/box_ops.py",
+      "sha256": "ca374c756f45508f07fb8ba4850be327cefcd6eb199000dd9ccbd7d6545537ef"
+    },
+    {
+      "file": "engine/rtv4/denoising.py",
+      "sha256": "aacd09e8ab5c567cee1a20432c1ccfb00dc83d2f59169b11ace0e7bc2820d736"
+    },
+    {
+      "file": "engine/rtv4/denoising_obb.py",
+      "sha256": "e3f80c8a818ca2df218b9b00741ba9d65419d0218b7e0b833a865cdf7ab6805b"
+    },
+    {
+      "file": "engine/rtv4/dfine_decoder.py",
+      "sha256": "acc7c8268b134d41bff3286816beabe4832878f125e62db6f125ed0130ad3c50"
+    },
+    {
+      "file": "engine/rtv4/dfine_utils.py",
+      "sha256": "b3d30d7fdeaa64e6824564fe37231d4834dc8d0a0b6312ba453b503acccd26d9"
+    },
+    {
+      "file": "engine/rtv4/dinov2_teacher.py",
+      "sha256": "7cce9fe6411eb51fe67ddea887aced859625b418c7c9a1538004511b5099df3f"
+    },
+    {
+      "file": "engine/rtv4/dinov3_teacher.py",
+      "sha256": "3a53fbf3116bd87d426d5ae35e3c79cf45239f09d4362f03f778daf5c5d69c29"
+    },
+    {
+      "file": "engine/rtv4/hybrid_encoder.py",
+      "sha256": "0b791121253a828ebb33a62a7588f70b7f77685adad67f0347d53446c4ba1700"
+    },
+    {
+      "file": "engine/rtv4/matcher.py",
+      "sha256": "bf189d27071df8b517be5789b9c758907fe83a25aa2c407e6cb39ebf9a8b8a33"
+    },
+    {
+      "file": "engine/rtv4/obb_matcher.py",
+      "sha256": "926a2c81606465e880c0186b932b41bb651c979fe3b8a13592eb8c9bea548123"
+    },
+    {
+      "file": "engine/rtv4/postprocessor.py",
+      "sha256": "c28cb1dc599b4412d85fb711a218cde98805e36a0bfed4e7ea8eea6a72ed0865"
+    },
+    {
+      "file": "engine/rtv4/rtdetrv2_decoder.py",
+      "sha256": "32b3c0a30e85a0f425cfe5739120d00aa52c247c41d17ec1017f4d9304b49001"
+    },
+    {
+      "file": "engine/rtv4/rtdetrv2_obb_decoder.py",
+      "sha256": "eefbf54dc482b3374429b3c5507e2c5dc194d668482fb09527edd1e35d0d7691"
+    },
+    {
+      "file": "engine/rtv4/rtv4.py",
+      "sha256": "777b4cf21062fc52c7b759224dceedd6e3da2757c15c89a11a8899c806cb66c5"
+    },
+    {
+      "file": "engine/rtv4/rtv4_criterion.py",
+      "sha256": "68eba16220945aaf23c68436fd7698823075b2d83407c1f8e297bdedc6f2a50b"
+    },
+    {
+      "file": "engine/rtv4/rtv4_obb_criterion.py",
+      "sha256": "ce0bbb7a912d037e18fdfa047e902e55b8fd028bc95331731764db0d37bbf10a"
+    },
+    {
+      "file": "engine/rtv4/rtv4_obb_criterion_ori.py",
+      "sha256": "bc651652b064b00fa4fce76469c4f43eaada6e9f3483981426636ef46d7b1614"
+    },
+    {
+      "file": "engine/rtv4/utils.py",
+      "sha256": "13048444eab986b862a6b086b7a08b731e160ee13a485028ea6aad495a622b4c"
+    },
+    {
+      "file": "engine/rtv4/utils_obb.py",
+      "sha256": "fc634a1fe9e6f3a7a3a313e76fd7c70034b95eabc9b5c8468d691c580b8621eb"
+    },
+    {
+      "file": "engine/solver/__init__.py",
+      "sha256": "e232d6a1bf7fa38af95f8c938b3c80cc5068c93e98e8793b20e460008fe00f02"
+    },
+    {
+      "file": "engine/solver/_solver.py",
+      "sha256": "ca70b2500b32e5ad10afabb346559c669ffe2c18d68b6c365e4d340341477343"
+    },
+    {
+      "file": "engine/solver/clas_engine.py",
+      "sha256": "216be5a2d29d664265aea35c2c019742a29a6ff716f19fe14ec635c97c7d6396"
+    },
+    {
+      "file": "engine/solver/clas_solver.py",
+      "sha256": "41a5d8107889f39a0af86668cac4fed7c6ebf31171df7ac5e340d447b19ba029"
+    },
+    {
+      "file": "engine/solver/det_engine.py",
+      "sha256": "b599627c198c155f812da971a71ac1e3bb3d7112188d1d1da52142614f0f9651"
+    },
+    {
+      "file": "engine/solver/det_solver.py",
+      "sha256": "547b65e5d06aaceac7cc0feefd7e09860e5c542acc5d774741734197918c9265"
+    },
+    {
+      "file": "tools/analysis/analyze_diorr_all_prediction_calibration.py",
+      "sha256": "bdd50108123eb17acbceeb31714f776b9d926db1702bb11ba269d4e46e732843"
+    },
+    {
+      "file": "tools/analysis/compare_diorr_trained_lqe_calibration.py",
+      "sha256": "974d62aacb60a766792b5462abe137897e84dc42598a5110b7a0ded728d4ac4a"
+    },
+    {
+      "file": "tools/benchmark/dataset.py",
+      "sha256": "6d9bca91fda74fb8643b94343555f8573f098c7921cb9a6a44d240924288b415"
+    },
+    {
+      "file": "tools/benchmark/get_info.py",
+      "sha256": "ad717493104aa178da08bc9bb54b147e915b2ad14a330a7566c182d4480d15f3"
+    },
+    {
+      "file": "tools/benchmark/requirements.txt",
+      "sha256": "ebce53bc4dfe0c837a19eaae23c356617168d8bf189b0a97023065cb1f81973b"
+    },
+    {
+      "file": "tools/benchmark/submit_fair1m.py",
+      "sha256": "5d9f638a2ecb86ded28f7808deb9a63acdf95f80b18220cc920bb256127fea45"
+    },
+    {
+      "file": "tools/benchmark/trt_benchmark.py",
+      "sha256": "108bc3365b9be3a94599086c234d1bdac3027fed6d59b2fe18c444ceef2e72e6"
+    },
+    {
+      "file": "tools/benchmark/utils.py",
+      "sha256": "0a61d50e0a20f9546fa08aa1df90dc229b923a35018aef1f5017a148f5772c4f"
+    },
+    {
+      "file": "tools/dataset/remap_obj365.py",
+      "sha256": "3405abd10c13f074c4a00cfb03ff060053dee52dbdaf386b444d82a5ed01a7d2"
+    },
+    {
+      "file": "tools/dataset/resize_obj365.py",
+      "sha256": "b5eef60895b88cae20320af73b199db3931afab4893f9d9a474dd01ec51f5d14"
+    },
+    {
+      "file": "tools/deployment/benchmark_riov1_riov2_trt_fp16.py",
+      "sha256": "1050b7553246f334daef11260c3454c6250f73a9a169e056b9d85ee73952fd78"
+    },
+    {
+      "file": "tools/deployment/benchmark_tensorrt.py",
+      "sha256": "db1948409b24da38dbe6b60dad1e2d13e630002acd54d6b135372a52ec28e5be"
+    },
+    {
+      "file": "tools/deployment/deploy_and_benchmark.py",
+      "sha256": "bfe7cd7a39621e0ebd7e7d8fce6e11111deb8e157a269886e2466343955959d0"
+    },
+    {
+      "file": "tools/deployment/export_engine.py",
+      "sha256": "aeae1bfaa87baf028f3461ff4d901e4a7454b68055700525d8cf38906299d51c"
+    },
+    {
+      "file": "tools/deployment/export_onnx.py",
+      "sha256": "a14b54b8dc8e43847553f5da5554147289338d6433c052e4b2c286836804b8eb"
+    },
+    {
+      "file": "tools/deployment/export_yolo_w_nms.py",
+      "sha256": "5603f249e3d44f0d39f8074e447c318d87f516233d3ebb477e4e2665a128d2ae"
+    },
+    {
+      "file": "tools/evaluation/eval_diorr_obb_metrics.sh",
+      "sha256": "134ca7760457463ac1de496aaa80c5e6353028132838c4f5ea79b3bae445ca21"
+    },
+    {
+      "file": "tools/inference/onnx_inf.py",
+      "sha256": "e312979a2fd1a156980cc38ce30434f26eaa23b4221e89a40eb9d0fe0a604976"
+    },
+    {
+      "file": "tools/inference/openvino_inf.py",
+      "sha256": "f99bc21a14a5b95aae6710e21685e5bb6f823686c20069449788e7e11260cea6"
+    },
+    {
+      "file": "tools/inference/requirements.txt",
+      "sha256": "3c85ab4f21d79da32459ce61acb48973d5ae820aefbd60faa065e94cce046bd4"
+    },
+    {
+      "file": "tools/inference/torch_inf.py",
+      "sha256": "0200acfc790cdd9fa82635851d94dd23d7f2eb1131906be54aa8f13d7dea463a"
+    },
+    {
+      "file": "tools/inference/trt_inf.py",
+      "sha256": "de4bb3db503654252ba4b773329ff411f7656fe2b51efeb7ef5059214a92d4ab"
+    },
+    {
+      "file": "tools/reference/convert_weight.py",
+      "sha256": "f0e0c239d2a862b8565879a6fabee8236c1e7cb623bea4a959fe3ec86e7c74a6"
+    },
+    {
+      "file": "tools/reference/safe_training.sh",
+      "sha256": "c47221bf1ba64cb63d6f4a78bc1051bc04c6566258d23f17473257aecbba87d3"
+    },
+    {
+      "file": "tools/visualization/fiftyone_vis.py",
+      "sha256": "3eb8a25d99bd637507255536c84b3695b9ce70699ec4de9e10930872e10ea281"
+    },
+    {
+      "file": "tools/visualization/tsne_content_query.py",
+      "sha256": "b7bb640832b36dd7b314ad330dc1934895c017cf85a9448de5b3218133e1826d"
+    }
+  ]
+}

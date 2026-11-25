@@ -27,8 +27,10 @@ from .model_registry import (          # noqa: F401 - 供调用方直接 import
     SPEC_FILENAME,
     ModelPreset,
     ModelSpecError,
+    MODELS_ROOT_ENV,
     default_models_root,
     find_repo_root,
+    resolve_models_root,
     load_spec,
     resolve_path,
     scan,
@@ -42,15 +44,19 @@ _REPO = _mr.find_repo_root(os.path.dirname(os.path.abspath(__file__)))
 _MODELS_ROOT = _mr.default_models_root(_REPO)
 
 
-def _rebuild(repo_root: str | None = None, models_root: str | None = None) -> None:
-    """重新扫描并替换模块级常量（PRESETS / _BY_KEY / _SKIPPED）。"""
+def _rebuild(repo_root: str | None = None, models_root: str | None = None,
+             declared: str | None = None) -> None:
+    """重新扫描并替换模块级常量（PRESETS / _BY_KEY / _SKIPPED）。
+
+    ``declared`` 是部署 manifest 里的 ``models_root``（可把模型放到仓库外）。
+    """
     global _REPO, _MODELS_ROOT, PRESETS, _BY_KEY, _SKIPPED
     if repo_root:
         _REPO = os.path.normpath(repo_root)
     if models_root:
         _MODELS_ROOT = os.path.normpath(models_root)
     else:
-        _MODELS_ROOT = _mr.default_models_root(_REPO)
+        _MODELS_ROOT = _mr.resolve_models_root(_REPO, declared)
     found, dropped = _mr.scan(_MODELS_ROOT, _REPO)
     PRESETS = tuple(found) + tuple(_mr.builtin_presets(_MODELS_ROOT, _REPO))
     _BY_KEY = {p.key: p for p in PRESETS}

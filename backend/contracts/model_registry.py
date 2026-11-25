@@ -120,6 +120,9 @@ _ROLE_LABELS = {
 #: "official_vocab_635 缺少 model.json"，纯属误导。
 ASSET_FOLDERS = ("adaptor_sc_055m", "official_vocab_635", "base_v1")
 
+#: 覆盖模型根目录的环境变量（模型可以放在仓库外，避免几个 GB 的权重进 git 目录）
+MODELS_ROOT_ENV = "VECROT_MODELS_ROOT"
+
 #: 路径前缀
 _REPO_PREFIX = "repo:"
 _MODELS_PREFIX = "models:"
@@ -154,6 +157,28 @@ def default_models_root(repo_root: str | None = None) -> str:
     """默认模型根目录：``<repo>/vecrot/models``。"""
     root = repo_root or find_repo_root()
     return os.path.normpath(os.path.join(root, "vecrot", "models"))
+
+
+def resolve_models_root(repo_root: str | None = None, declared: str | None = None,
+                        env: dict | None = None) -> str:
+    """确定模型根目录。优先级：显式声明 > 环境变量 > 默认位置。
+
+    为什么允许换位置：模型包有几个 GB，很多人不想让它躺在 clone 出来的
+    git 目录里（备份、同步、换盘都别扭）。所以三种都支持：
+
+    * ``declared``：部署 manifest 里的 ``models_root``（绝对路径，或相对仓库根）
+    * 环境变量 ``VECROT_MODELS_ROOT``
+    * 默认 ``<repo>/vecrot/models``（网盘包解压到这里就零配置）
+    """
+    root = os.path.normpath(repo_root or find_repo_root())
+    env_map = os.environ if env is None else env
+    for cand in (declared, env_map.get(MODELS_ROOT_ENV)):
+        if not cand or not isinstance(cand, str):
+            continue
+        path = cand if os.path.isabs(cand) else os.path.join(root, cand)
+        if os.path.isdir(path):
+            return os.path.normpath(path)
+    return default_models_root(root)
 
 
 @dataclass(frozen=True)

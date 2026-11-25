@@ -1,0 +1,42 @@
+task: detection
+
+
+evaluator:
+  type: GzdaObbEvaluator
+  score_thr: 0.3
+  max_dets: 100
+
+num_classes: 1
+remap_mscoco_category: False
+
+train_dataloader:
+  type: DataLoader
+  dataset:
+    type: GzdaDOTADataset
+    img_folder: /data1/wzh26/data/gzda_v3_dota/train/images
+    ann_folder: /data1/wzh26/data/gzda_v3_dota/train/annfiles
+    return_masks: False
+    transforms:
+      type: Compose
+      ops: ~
+  shuffle: True
+  num_workers: 8
+  drop_last: True
+  collate_fn:
+    type: BatchImageCollateFunction
+
+val_dataloader:
+  type: DataLoader
+  dataset:
+    type: GzdaDOTADataset
+    img_folder: /data1/wzh26/data/gzda_v3_dota/val/images
+    ann_folder: /data1/wzh26/data/gzda_v3_dota/val/annfiles
+    return_masks: False
+    transforms:
+      type: Compose
+      ops: ~
+  shuffle: False
+  num_workers: 8
+  drop_last: False
+  collate_fn:
+    type: BatchImageCollateFunction

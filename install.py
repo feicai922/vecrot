@@ -162,6 +162,14 @@ def build_manifest(check_only: bool = False) -> dict:
 
     # manifest 就在 <仓库根>/deployment/ 下，仓库根是它的上一级
     m["repo_root"] = REPO
+    # 模型根：模板里是相对路径（vecrot/models），解析成绝对路径；
+    # 用户已经把模型放到别的盘时，保留那个（存在才用）
+    declared = m.get("models_root") or "vecrot/models"
+    if not os.path.isabs(declared):
+        declared = os.path.normpath(os.path.join(REPO, declared))
+    m["models_root"] = declared if os.path.isdir(declared) else declared
+    log(f"       模型根：{m['models_root']}"
+        + ("" if os.path.isdir(m["models_root"]) else "（尚未创建/未下载模型）"))
 
     if not check_only:
         os.makedirs(os.path.dirname(OUT_MANIFEST), exist_ok=True)
